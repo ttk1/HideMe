@@ -1,0 +1,3 @@
+name: ${name}
+version: ${version}
+main: net.ttk1.HideMe
