@@ -1,5 +1,5 @@
 package net.ttk1;
 
-public class HideMe {
+public class HideMe JavaPlugin {
 
 }
