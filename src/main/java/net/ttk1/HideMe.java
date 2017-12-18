@@ -97,7 +97,7 @@ public class HideMe extends JavaPlugin {
 
     private void hideMe(Player player) {
         for (Player p: getServer().getOnlinePlayers()) {
-            if(!player.equals(p)) {
+            if(!player.equals(p) && !p.hasPermission("hideme.bypass")) {
                 p.hidePlayer(this, player);
             }
         }
@@ -111,6 +111,10 @@ public class HideMe extends JavaPlugin {
     }
 
     private void hideAll(Player player) {
+        if (player.hasPermission("hideme.bypass")) {
+            return;
+        }
+
         for (Player p: getServer().getOnlinePlayers()) {
             if(!player.equals(p) && hidden.contains(p.getUniqueId().toString())) {
                 player.hidePlayer(this, p);

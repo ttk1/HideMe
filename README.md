@@ -9,6 +9,14 @@
 ```
 
 ## パーミッション
+/hidemeコマンドの使用
+
 ```
 hideme.hideme
+```
+
+他のプレーヤーが/hidemeコマンドを使用しても見えなくならない
+
+```
+hideme.bypass
 ```
