@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -122,6 +123,15 @@ public class HideMe extends JavaPlugin {
         }
     }
 
+    // ログイン・ログアウトメッセージの抑止をバイパスする
+    private void sendMsg(String msg) {
+        for (Player player: getServer().getOnlinePlayers()) {
+            if(player.hasPermission("hideme.bypass")) {
+                player.sendMessage(msg);
+            }
+        }
+    }
+
     class SessionListener implements Listener {
         HideMe plg;
         SessionListener(HideMe plg) {
@@ -133,12 +143,23 @@ public class HideMe extends JavaPlugin {
             Player player = event.getPlayer();
             String uuid = player.getUniqueId().toString();
             if (hidden.contains(uuid)) {
+                sendMsg(event.getJoinMessage());
                 event.setJoinMessage(null);
                 plg.hideMe(player);
             } else {
                 plg.showMe(event.getPlayer());
             }
             plg.hideAll(player);
+        }
+
+        @EventHandler
+        public void onPlayerQuitEvent(PlayerQuitEvent event) {
+            Player player = event.getPlayer();
+            String uuid = player.getUniqueId().toString();
+            if (hidden.contains(uuid)) {
+                sendMsg(event.getQuitMessage());
+                event.setQuitMessage(null);
+            }
         }
     }
 }
