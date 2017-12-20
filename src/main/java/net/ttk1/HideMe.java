@@ -1,5 +1,6 @@
 package net.ttk1;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.io.File;
@@ -34,7 +35,6 @@ public class HideMe extends JavaPlugin {
             try {
                 path.mkdir();
             } catch (Exception e) {
-                // TODO: handle exception
                 e.printStackTrace();
             }
         }
@@ -43,32 +43,35 @@ public class HideMe extends JavaPlugin {
             try {
                 dataFile.createNewFile();
             } catch (Exception e) {
-                // TODO: handle exception
                 e.printStackTrace();
             }
         }
 
-        data = new YamlConfiguration();
-        try {
-            data.load(dataFile);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (dataFile.exists()) {
+            data = new YamlConfiguration();
+            try {
+                data.load(dataFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            hidden = data.getStringList("players");
+        } else {
+            hidden = new ArrayList<>();
         }
-
-        hidden = data.getStringList("players");
 
         getLogger().info("HideMe enabled");
     }
 
     @Override
     public void onDisable() {
-        data.set("players", hidden);
-        try {
-            data.save(dataFile);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        // データのセーブ
+        if (data != null && dataFile.exists()) {
+            data.set("players", hidden);
+            try {
+                data.save(dataFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         getLogger().info("HideMe disabled");
     }
