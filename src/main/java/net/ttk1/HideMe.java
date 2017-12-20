@@ -133,6 +133,7 @@ public class HideMe extends JavaPlugin {
             Player player = event.getPlayer();
             String uuid = player.getUniqueId().toString();
             if (hidden.contains(uuid)) {
+                event.setJoinMessage(null);
                 plg.hideMe(player);
             } else {
                 plg.showMe(event.getPlayer());
