@@ -16,7 +16,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-
+/**
+ * プレーヤーの可視性をコントロールするJavaPluginクラス
+ * @author ttk1
+ */
 public class HideMe extends JavaPlugin {
     private List<String> hidden;
     private File path;
@@ -76,6 +79,9 @@ public class HideMe extends JavaPlugin {
         getLogger().info("HideMe disabled");
     }
 
+    /**
+     * コマンドを処理
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         if (sender instanceof Player) {
@@ -99,6 +105,10 @@ public class HideMe extends JavaPlugin {
         return true;
     }
 
+    /**
+     * 指定したプレーヤーを他のプレーヤーから隠す
+     * @param player
+     */
     private void hideMe(Player player) {
         for (Player p: getServer().getOnlinePlayers()) {
             if(!player.equals(p) && !p.hasPermission("hideme.bypass")) {
@@ -106,6 +116,11 @@ public class HideMe extends JavaPlugin {
             }
         }
     }
+
+    /**
+     * 指定したプレーヤーを他のプレーヤーから見えるようにする
+     * @param player
+     */
     private void showMe(Player player) {
         for (Player p: getServer().getOnlinePlayers()) {
             if(!player.equals(p)) {
@@ -114,11 +129,14 @@ public class HideMe extends JavaPlugin {
         }
     }
 
+    /**
+     * 指定したプレーヤーが隠れたプレーヤーを見えないようにする
+     * @param player
+     */
     private void hideAll(Player player) {
         if (player.hasPermission("hideme.bypass")) {
             return;
         }
-
         for (Player p: getServer().getOnlinePlayers()) {
             if(!player.equals(p) && hidden.contains(p.getUniqueId().toString())) {
                 player.hidePlayer(this, p);
@@ -126,7 +144,10 @@ public class HideMe extends JavaPlugin {
         }
     }
 
-    // ログイン・ログアウトメッセージの抑止をバイパスする
+    /**
+     * ログイン・ログアウトメッセージの抑止をバイパスして送信する
+     * @param msg
+     */
     private void sendMsg(String msg) {
         for (Player player: getServer().getOnlinePlayers()) {
             if(player.hasPermission("hideme.bypass")) {
@@ -135,7 +156,10 @@ public class HideMe extends JavaPlugin {
         }
     }
 
-    class SessionListener implements Listener {
+    /**
+     * プレーヤーのログイン・ログアウトイベントの処理
+     */
+    private class SessionListener implements Listener {
         HideMe plg;
         SessionListener(HideMe plg) {
             this.plg = plg;
