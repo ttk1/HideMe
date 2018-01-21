@@ -2,9 +2,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.ttk1</groupId>
     <artifactId>HideMe</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>HideMe</name>
-    <description>プレーヤーを隠蔽する</description>
+    <description>プレーヤーを隠蔽するSpigotプラグイン</description>
     <properties>
           <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
