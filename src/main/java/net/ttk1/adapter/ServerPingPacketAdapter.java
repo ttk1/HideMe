@@ -32,8 +32,8 @@ public class ServerPingPacketAdapter extends PacketAdapter {
         StructureModifier<WrappedServerPing> pings = event.getPacket().getServerPings();
         WrappedServerPing ping = pings.read(0);
 
-        // チェック用ログ出力
-        plg.getLogger().info(manager.getHiddenSet().toString());
+        // pingパケットの送信元をログに出力
+        plg.getHideMeLogger().info(event.getPlayer().getAddress().toString());
 
         if (ping.getPlayersOnline() < manager.getOnlineHiddenCount()) {
             plg.getLogger().warning("プレーヤー数が異常です");
