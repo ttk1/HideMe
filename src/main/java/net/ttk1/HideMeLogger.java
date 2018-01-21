@@ -19,11 +19,7 @@ public class HideMeLogger {
         try {
             logDir = new File(plg.getDataFolder(), "log");
             if (!logDir.exists()) {
-                try {
-                    logDir.mkdir();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                logDir.mkdir();
             }
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss'.log'");
