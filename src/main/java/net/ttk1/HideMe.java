@@ -1,7 +1,12 @@
 package net.ttk1;
 
-import java.util.ArrayList;
+import net.ttk1.listener.SessionListener;
+import net.ttk1.adapter.ServerPingPacketAdapter;
+
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 import java.io.File;
 
@@ -10,26 +15,22 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.comphenix.protocol.ProtocolLibrary;
 
 /**
  * プレーヤーの可視性をコントロールするJavaPluginクラス
  * @author ttk1
  */
 public class HideMe extends JavaPlugin {
-    private List<String> hidden;
     private File path;
     private File dataFile;
     private FileConfiguration data;
+    private PlayerManager manager;
 
     @Override
     public void onEnable() {
-        getServer().getPluginManager().registerEvents(new SessionListener(this), this);
-
         // データのロード
         path = getDataFolder();
         dataFile = new File(path, "hidden.yml");
@@ -50,6 +51,7 @@ public class HideMe extends JavaPlugin {
             }
         }
 
+        List<String> hidden;
         if (dataFile.exists()) {
             data = new YamlConfiguration();
             try {
@@ -62,14 +64,16 @@ public class HideMe extends JavaPlugin {
             hidden = new ArrayList<>();
         }
 
+        manager = new PlayerManager(new HashSet<String>(hidden));
+        getServer().getPluginManager().registerEvents(new SessionListener(this), this);
+        ProtocolLibrary.getProtocolManager().addPacketListener(new ServerPingPacketAdapter(this));
         getLogger().info("HideMe enabled");
     }
 
     @Override
     public void onDisable() {
-        // データのセーブ
         if (data != null && dataFile.exists()) {
-            data.set("players", hidden);
+            data.set("players", new ArrayList<String>(manager.getHiddenSet()));
             try {
                 data.save(dataFile);
             } catch (Exception e) {
@@ -80,20 +84,26 @@ public class HideMe extends JavaPlugin {
     }
 
     /**
+     * @return HiddenPlayerManager
+     */
+    public PlayerManager getManager() {
+        return manager;
+    }
+
+    /**
      * コマンドを処理
      */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            String uuid = player.getUniqueId().toString();
             if (player.hasPermission("hideme.hideme")) {
-                if(!hidden.contains(uuid)) {
-                    hidden.add(uuid);
+                if(!manager.isHidden(player)) {
+                    manager.add(player);
                     hideMe(player);
                     player.sendMessage("You are now hidden.");
                 } else {
-                    hidden.remove(uuid);
+                    manager.remove(player);
                     showMe(player);
                     player.sendMessage("You are now visible.");
                 }
@@ -109,7 +119,7 @@ public class HideMe extends JavaPlugin {
      * 指定したプレーヤーを他のプレーヤーから隠す
      * @param player
      */
-    private void hideMe(Player player) {
+    public void hideMe(Player player) {
         for (Player p: getServer().getOnlinePlayers()) {
             if(!player.equals(p) && !p.hasPermission("hideme.bypass")) {
                 p.hidePlayer(this, player);
@@ -121,7 +131,7 @@ public class HideMe extends JavaPlugin {
      * 指定したプレーヤーを他のプレーヤーから見えるようにする
      * @param player
      */
-    private void showMe(Player player) {
+    public void showMe(Player player) {
         for (Player p: getServer().getOnlinePlayers()) {
             if(!player.equals(p)) {
                 p.showPlayer(this, player);
@@ -133,12 +143,12 @@ public class HideMe extends JavaPlugin {
      * 指定したプレーヤーが隠れたプレーヤーを見えないようにする
      * @param player
      */
-    private void hideAll(Player player) {
+    public void hideAll(Player player) {
         if (player.hasPermission("hideme.bypass")) {
             return;
         }
         for (Player p: getServer().getOnlinePlayers()) {
-            if(!player.equals(p) && hidden.contains(p.getUniqueId().toString())) {
+            if(!player.equals(p) && manager.isHidden(p)) {
                 player.hidePlayer(this, p);
             }
         }
@@ -148,7 +158,7 @@ public class HideMe extends JavaPlugin {
      * ログイン・ログアウトメッセージの抑止をバイパスして送信する
      * @param msg
      */
-    private void sendMsg(String msg) {
+    public void sendMsg(String msg) {
         for (Player player: getServer().getOnlinePlayers()) {
             if(player.hasPermission("hideme.bypass")) {
                 player.sendMessage(msg);
@@ -156,37 +166,5 @@ public class HideMe extends JavaPlugin {
         }
     }
 
-    /**
-     * プレーヤーのログイン・ログアウトイベントの処理
-     */
-    private class SessionListener implements Listener {
-        HideMe plg;
-        SessionListener(HideMe plg) {
-            this.plg = plg;
-        }
 
-        @EventHandler
-        public void onPlayerJoinEvent(PlayerJoinEvent event) {
-            Player player = event.getPlayer();
-            String uuid = player.getUniqueId().toString();
-            if (hidden.contains(uuid)) {
-                sendMsg(event.getJoinMessage());
-                event.setJoinMessage(null);
-                plg.hideMe(player);
-            } else {
-                plg.showMe(event.getPlayer());
-            }
-            plg.hideAll(player);
-        }
-
-        @EventHandler
-        public void onPlayerQuitEvent(PlayerQuitEvent event) {
-            Player player = event.getPlayer();
-            String uuid = player.getUniqueId().toString();
-            if (hidden.contains(uuid)) {
-                sendMsg(event.getQuitMessage());
-                event.setQuitMessage(null);
-            }
-        }
-    }
 }
