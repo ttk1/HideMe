@@ -175,6 +175,4 @@ public class HideMe extends JavaPlugin {
             }
         }
     }
-
-
 }

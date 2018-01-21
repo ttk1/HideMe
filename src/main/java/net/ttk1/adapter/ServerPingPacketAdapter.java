@@ -51,6 +51,4 @@ public class ServerPingPacketAdapter extends PacketAdapter {
 
         pings.write(0, ping);
     }
-
-
 }
