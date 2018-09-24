@@ -1,47 +1,51 @@
 package net.ttk1.listener;
 
+import com.google.inject.Inject;
 import net.ttk1.HideMe;
-import net.ttk1.PlayerManager;
+import net.ttk1.api.PlayerManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.List;
-
 /**
  * プレーヤーのログイン・ログアウトイベントの処理
  */
 public class SessionListener implements Listener {
-    private HideMe plg;
-    private PlayerManager manager;
+    private HideMe plugin;
+    private PlayerManager playerManager;
 
-    public SessionListener(HideMe plg) {
-        this.plg = plg;
-        this.manager = plg.getManager();
+    @Inject
+    private void setPlugin(HideMe plugin) {
+        this.plugin = plugin;
+    }
+
+    @Inject
+    private void setPlayerManager(PlayerManager playerManager) {
+        this.playerManager = playerManager;
     }
 
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (manager.isHidden(player)) {
-            manager.login(player);
-            plg.sendMsg(event.getJoinMessage());
+        if (playerManager.isHidden(player)) {
+            playerManager.login(player);
+            plugin.sendMsg(event.getJoinMessage());
             event.setJoinMessage(null);
-            plg.hideMe(player);
+            plugin.hideMe(player);
         } else {
-            plg.showMe(event.getPlayer());
+            plugin.showMe(event.getPlayer());
         }
-        plg.hideAll(player);
+        plugin.hideAll(player);
     }
 
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if (manager.isHidden(player)) {
-            manager.logout(player);
-            plg.sendMsg(event.getQuitMessage());
+        if (playerManager.isHidden(player)) {
+            playerManager.logout(player);
+            plugin.sendMsg(event.getQuitMessage());
             event.setQuitMessage(null);
         }
     }
