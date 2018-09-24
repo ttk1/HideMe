@@ -1,19 +1,14 @@
 package net.ttk1;
 
+import com.google.inject.Inject;
+
+import com.google.inject.Injector;
+import net.ttk1.api.PlayerManager;
 import net.ttk1.listener.SessionListener;
 import net.ttk1.adapter.ServerPingPacketAdapter;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
-
-import java.io.File;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,62 +19,50 @@ import com.comphenix.protocol.ProtocolLibrary;
  * @author ttk1
  */
 public class HideMe extends JavaPlugin {
-    private File path;
-    private File dataFile;
-    private FileConfiguration data;
-    private PlayerManager manager;
+    private ServerPingPacketAdapter serverPingPacketAdapter;
+    private SessionListener sessionListener;
+    private PlayerManager playerManager;
+
+    @Inject
+    private void setServerPingPacketAdapter(ServerPingPacketAdapter serverPingPacketAdapter) {
+        this.serverPingPacketAdapter = serverPingPacketAdapter;
+    }
+
+    @Inject
+    private void setSessionListener(SessionListener sessionListener) {
+        this.sessionListener = sessionListener;
+    }
+
+    @Inject
+    private void setPlayerManager(PlayerManager playerManager) {
+        this.playerManager = playerManager;
+    }
 
     @Override
     public void onEnable() {
-        // データのロード
-        path = getDataFolder();
-        dataFile = new File(path, "hidden.yml");
+        // クラスローダーを書き換える
+        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClassLoader());
 
-        if (!path.exists()) {
-            try {
-                path.mkdir();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        PluginModule module = new PluginModule(this);
+        Injector injector = module.createInjector();
+        injector.injectMembers(this);
+
+
+        // event listenerの登録
+        {
+            getServer().getPluginManager().registerEvents(sessionListener, this);
+            ProtocolLibrary.getProtocolManager().addPacketListener(serverPingPacketAdapter);
         }
 
-        if (!dataFile.exists()) {
-            try {
-                dataFile.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        // クラスローダーを元に戻す
+        Thread.currentThread().setContextClassLoader(currentClassLoader);
 
-        List<String> hidden;
-        if (dataFile.exists()) {
-            data = new YamlConfiguration();
-            try {
-                data.load(dataFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            hidden = data.getStringList("players");
-        } else {
-            hidden = new ArrayList<>();
-        }
-
-        manager = new PlayerManager(new HashSet<String>(hidden));
-        getServer().getPluginManager().registerEvents(new SessionListener(this), this);
-        ProtocolLibrary.getProtocolManager().addPacketListener(new ServerPingPacketAdapter(this));
         getLogger().info("HideMe enabled");
     }
 
     @Override
     public void onDisable() {
-        if (data != null && dataFile.exists()) {
-            data.set("players", new ArrayList<String>(manager.getHiddenSet()));
-            try {
-                data.save(dataFile);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         getLogger().info("HideMe disabled");
     }
 
@@ -87,7 +70,7 @@ public class HideMe extends JavaPlugin {
      * @return HiddenPlayerManager
      */
     public PlayerManager getManager() {
-        return manager;
+        return playerManager;
     }
 
     /**
@@ -98,12 +81,12 @@ public class HideMe extends JavaPlugin {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (player.hasPermission("hideme.hideme")) {
-                if(!manager.isHidden(player)) {
-                    manager.add(player);
+                if(!playerManager.isHidden(player)) {
+                    playerManager.addHiddenPlayer(player);
                     hideMe(player);
                     player.sendMessage("You are now hidden.");
                 } else {
-                    manager.remove(player);
+                    playerManager.removeHiddenPlayer(player);
                     showMe(player);
                     player.sendMessage("You are now visible.");
                 }
@@ -148,7 +131,7 @@ public class HideMe extends JavaPlugin {
             return;
         }
         for (Player p: getServer().getOnlinePlayers()) {
-            if(!player.equals(p) && manager.isHidden(p)) {
+            if(!player.equals(p) && playerManager.isHidden(p)) {
                 player.hidePlayer(this, p);
             }
         }

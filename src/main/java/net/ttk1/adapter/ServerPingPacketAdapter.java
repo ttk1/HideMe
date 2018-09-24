@@ -6,10 +6,11 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedServerPing;
 
+import com.google.inject.Inject;
+import net.ttk1.api.PlayerManager;
 import org.bukkit.entity.Player;
 
 import net.ttk1.HideMe;
-import net.ttk1.PlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +19,24 @@ import java.util.List;
  * ServerListPingを書き換えて、プレーヤー数を偽装する
  */
 public class ServerPingPacketAdapter extends PacketAdapter {
-    private HideMe plg;
-    private PlayerManager manager;
+    private HideMe plugin;
+    private PlayerManager playerManager;
 
-    public ServerPingPacketAdapter(HideMe plg) {
-        super(plg, PacketType.Status.Server.SERVER_INFO);
-        this.plg = plg;
-        this.manager = plg.getManager();
+    //@Inject
+    private void setPlugin(HideMe plugin) {
+        this.plugin = plugin;
+    }
+
+    //@Inject
+    private void setPlayerManager(PlayerManager playerManager) {
+        this.playerManager = playerManager;
+    }
+
+    @Inject
+    public ServerPingPacketAdapter(HideMe plugin) {
+        super(plugin, PacketType.Status.Server.SERVER_INFO);
+        setPlugin(plugin);
+        setPlayerManager(plugin.getManager());
     }
 
     @Override
@@ -32,15 +44,15 @@ public class ServerPingPacketAdapter extends PacketAdapter {
         StructureModifier<WrappedServerPing> pings = event.getPacket().getServerPings();
         WrappedServerPing ping = pings.read(0);
 
-        if (ping.getPlayersOnline() < manager.getOnlineHiddenCount()) {
-            plg.getLogger().warning("プレーヤー数が異常です");
+        if (ping.getPlayersOnline() < playerManager.getOnlineHiddenPlayerCount()) {
+            plugin.getLogger().warning("プレーヤー数が異常です");
         } else {
-            ping.setPlayersOnline(ping.getPlayersOnline() - manager.getOnlineHiddenCount());
+            ping.setPlayersOnline(ping.getPlayersOnline() - playerManager.getOnlineHiddenPlayerCount());
         }
 
         List<Player> players = new ArrayList<>();
-        for (Player player: plg.getServer().getOnlinePlayers()){
-            if (!manager.isHidden(player)){
+        for (Player player: plugin.getServer().getOnlinePlayers()){
+            if (!playerManager.isHidden(player)){
                 players.add(player);
             }
         }
