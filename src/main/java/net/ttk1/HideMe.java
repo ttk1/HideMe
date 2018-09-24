@@ -28,7 +28,6 @@ public class HideMe extends JavaPlugin {
     private File dataFile;
     private FileConfiguration data;
     private PlayerManager manager;
-    private HideMeLogger logger;
 
     @Override
     public void onEnable() {
@@ -65,7 +64,6 @@ public class HideMe extends JavaPlugin {
             hidden = new ArrayList<>();
         }
 
-        logger = new HideMeLogger(this);
         manager = new PlayerManager(new HashSet<String>(hidden));
         getServer().getPluginManager().registerEvents(new SessionListener(this), this);
         ProtocolLibrary.getProtocolManager().addPacketListener(new ServerPingPacketAdapter(this));
@@ -83,14 +81,6 @@ public class HideMe extends JavaPlugin {
             }
         }
         getLogger().info("HideMe disabled");
-    }
-
-    /**
-     *
-     * @return HideMe用のlogger
-     */
-    public HideMeLogger getHideMeLogger() {
-        return logger;
     }
 
     /**
