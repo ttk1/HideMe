@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.UUID;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -137,8 +138,28 @@ public class PlayerManagerImpl implements PlayerManager {
     }
 
     @Override
+    public Set<String> getHiddenPlayerNames() {
+        Set<String> hiddenPlayerNames = new HashSet<>();
+        for (String playerUUID: hiddenPlayers) {
+            String playerName = plugin.getServer().getPlayer(UUID.fromString(playerUUID)).getName();
+            hiddenPlayerNames.add(playerName);
+        }
+        return hiddenPlayerNames;
+    }
+
+    @Override
     public Set<String> getOnlineHiddenPlayerUUIDs(){
         return onlineHiddenPlayers;
+    }
+
+    @Override
+    public Set<String> getOnlineHiddenPlayerNames() {
+        Set<String> onlineHiddenPlayerNames = new HashSet<>();
+        for (String playerUUID: onlineHiddenPlayers) {
+            String playerName = plugin.getServer().getPlayer(UUID.fromString(playerUUID)).getName();
+            onlineHiddenPlayerNames.add(playerName);
+        }
+        return onlineHiddenPlayerNames;
     }
 
     @Override

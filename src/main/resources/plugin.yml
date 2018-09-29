@@ -6,4 +6,23 @@ depend: [ProtocolLib]
 commands:
   hideme:
     description: hideme command.
-    usage: '/hideme'
+    usage: /hideme
+    aliases: hm
+
+permissions:
+  hideme.version:
+    default: op
+  hideme.list:
+    default: op
+  hideme.help:
+    default: op
+  hideme.status:
+    default: op
+  hideme.hide:
+    default: op
+  hideme.hide.player:
+    default: op
+  hideme.show:
+    default: op
+  hideme.show.player:
+    default: op

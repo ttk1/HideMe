@@ -7,8 +7,9 @@ import net.ttk1.api.PlayerManager;
 import net.ttk1.listener.SessionListener;
 import net.ttk1.adapter.ServerPingPacketAdapter;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +23,9 @@ public class HideMe extends JavaPlugin {
     private ServerPingPacketAdapter serverPingPacketAdapter;
     private SessionListener sessionListener;
     private PlayerManager playerManager;
+
+    private CommandExecutor commandExecutor;
+    private TabCompleter tabCompleter;
 
     @Inject
     private void setServerPingPacketAdapter(ServerPingPacketAdapter serverPingPacketAdapter) {
@@ -38,6 +42,16 @@ public class HideMe extends JavaPlugin {
         this.playerManager = playerManager;
     }
 
+    @Inject
+    private void setCommandExecutor(CommandExecutor commandExecutor) {
+        this.commandExecutor = commandExecutor;
+    }
+
+    @Inject
+    private void setTabCompleter(TabCompleter tabCompleter) {
+        this.tabCompleter = tabCompleter;
+    }
+
     @Override
     public void onEnable() {
         // クラスローダーを書き換える
@@ -48,11 +62,17 @@ public class HideMe extends JavaPlugin {
         Injector injector = module.createInjector();
         injector.injectMembers(this);
 
-
         // event listenerの登録
         {
             getServer().getPluginManager().registerEvents(sessionListener, this);
             ProtocolLibrary.getProtocolManager().addPacketListener(serverPingPacketAdapter);
+        }
+
+        // command
+        {
+            PluginCommand command = getCommand("hideme");
+            command.setExecutor(commandExecutor);
+            command.setTabCompleter(tabCompleter);
         }
 
         // クラスローダーを元に戻す
@@ -76,6 +96,7 @@ public class HideMe extends JavaPlugin {
     /**
      * コマンドを処理
      */
+    /*
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
         if (sender instanceof Player) {
@@ -97,6 +118,7 @@ public class HideMe extends JavaPlugin {
 
         return true;
     }
+    */
 
     /**
      * 指定したプレーヤーを他のプレーヤーから隠す

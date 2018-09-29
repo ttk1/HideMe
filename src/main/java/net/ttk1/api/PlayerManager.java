@@ -25,7 +25,11 @@ public interface PlayerManager {
 
     Set<String> getHiddenPlayerUUIDs();
 
+    Set<String> getHiddenPlayerNames();
+
     Set<String> getOnlineHiddenPlayerUUIDs();
+
+    Set<String> getOnlineHiddenPlayerNames();
 
     int getHiddenPlayerCount();
 
