@@ -1,7 +1,9 @@
-package net.ttk1.api;
+package net.ttk1.hideme.api;
 
 import com.google.inject.ImplementedBy;
-import net.ttk1.PlayerManagerImpl;
+
+import net.ttk1.hideme.PlayerManagerImpl;
+
 import org.bukkit.entity.Player;
 
 import java.util.Set;

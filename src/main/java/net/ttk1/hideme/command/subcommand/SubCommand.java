@@ -1,4 +1,4 @@
-package net.ttk1.command.subcommand;
+package net.ttk1.hideme.command.subcommand;
 
 import org.bukkit.command.CommandSender;
 

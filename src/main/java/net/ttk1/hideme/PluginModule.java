@@ -1,12 +1,12 @@
-package net.ttk1;
+package net.ttk1.hideme;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import net.ttk1.command.HideMeCommandExecutor;
+import net.ttk1.hideme.command.HideMeCommandExecutor;
+import net.ttk1.hideme.command.HideMeTabCompleter;
 
-import net.ttk1.command.HideMeTabCompleter;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 

@@ -1,21 +1,21 @@
-package net.ttk1.command.subcommand;
+package net.ttk1.hideme.command.subcommand;
 
-import net.ttk1.HideMe;
-import net.ttk1.api.PlayerManager;
+import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.api.PlayerManager;
+
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class ShowCommand implements SubCommand {
-    private final String SUB_COMMAND = "show";
-    private final String PERMISSION = "hideme.show";
+public class ListCommand implements SubCommand {
+    private final String SUB_COMMAND = "list";
+    private final String PERMISSION = "hideme.list";
 
     private HideMe plugin;
     private PlayerManager playerManager;
 
-    public ShowCommand(HideMe plugin, PlayerManager playerManager) {
+    public ListCommand(HideMe plugin, PlayerManager playerManager) {
         this.plugin = plugin;
         this.playerManager = playerManager;
     }
@@ -32,18 +32,7 @@ public class ShowCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                if(playerManager.isHidden(player)) {
-                    playerManager.removeHiddenPlayer(player);
-                    plugin.showMe(player);
-                    player.sendMessage("You are now visible.");
-                } else {
-                    player.sendMessage("You are already visible.");
-                }
-            } else {
-                sender.sendMessage("This is player command!");
-            }
+            sender.sendMessage(playerManager.getHiddenPlayerNames().toString());
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
         }

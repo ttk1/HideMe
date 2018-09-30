@@ -1,7 +1,8 @@
-package net.ttk1.command.subcommand;
+package net.ttk1.hideme.command.subcommand;
 
-import net.ttk1.HideMe;
-import net.ttk1.api.PlayerManager;
+import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.api.PlayerManager;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

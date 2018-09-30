@@ -1,6 +1,6 @@
 name: ${name}
 version: ${version}
-main: net.ttk1.HideMe
+main: net.ttk1.hideme.HideMe
 depend: [ProtocolLib]
 author: ttk1
 website: https://github.com/ttk1/HideMe

@@ -1,4 +1,4 @@
-package net.ttk1.adapter;
+package net.ttk1.hideme.adapter;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -7,10 +7,11 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedServerPing;
 
 import com.google.inject.Inject;
-import net.ttk1.api.PlayerManager;
-import org.bukkit.entity.Player;
 
-import net.ttk1.HideMe;
+import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.HideMe;
+
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;

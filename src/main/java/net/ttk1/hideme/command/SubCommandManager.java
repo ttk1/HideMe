@@ -1,11 +1,11 @@
-package net.ttk1.command;
+package net.ttk1.hideme.command;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import net.ttk1.HideMe;
-import net.ttk1.api.PlayerManager;
-import net.ttk1.command.subcommand.*;
+import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.command.subcommand.*;
 
 import java.util.ArrayList;
 import java.util.List;

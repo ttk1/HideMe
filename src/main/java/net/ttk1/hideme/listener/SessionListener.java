@@ -1,8 +1,8 @@
-package net.ttk1.listener;
+package net.ttk1.hideme.listener;
 
 import com.google.inject.Inject;
-import net.ttk1.HideMe;
-import net.ttk1.api.PlayerManager;
+import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.api.PlayerManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

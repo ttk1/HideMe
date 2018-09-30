@@ -1,6 +1,7 @@
-package net.ttk1;
+package net.ttk1.hideme;
 
 import java.io.File;
+
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
@@ -8,7 +9,9 @@ import java.util.UUID;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import net.ttk1.api.PlayerManager;
+
+import net.ttk1.hideme.api.PlayerManager;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
