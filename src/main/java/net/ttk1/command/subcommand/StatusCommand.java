@@ -3,19 +3,19 @@ package net.ttk1.command.subcommand;
 import net.ttk1.HideMe;
 import net.ttk1.api.PlayerManager;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-public class VersionCommand implements SubCommand {
-    private final String SUB_COMMAND = "version";
-    private final String PERMISSION = "hideme.version";
+public class StatusCommand implements SubCommand {
+    private final String SUB_COMMAND = "status";
+    private final String PERMISSION = "hideme.status";
 
     private HideMe plugin;
     private PlayerManager playerManager;
 
-    public VersionCommand(HideMe plugin, PlayerManager playerManager) {
+    public StatusCommand(HideMe plugin, PlayerManager playerManager) {
         this.plugin = plugin;
         this.playerManager = playerManager;
     }
@@ -32,7 +32,16 @@ public class VersionCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
-            sender.sendMessage(plugin.getDescription().getVersion());
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                if(playerManager.isHidden(player)) {
+                    player.sendMessage("You are now hidden.");
+                } else {
+                    player.sendMessage("You are now visible.");
+                }
+            } else {
+                sender.sendMessage("This is player command!");
+            }
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
         }

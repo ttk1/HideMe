@@ -5,9 +5,7 @@ import com.google.inject.Singleton;
 
 import net.ttk1.HideMe;
 import net.ttk1.api.PlayerManager;
-import net.ttk1.command.subcommand.ListCommand;
-import net.ttk1.command.subcommand.SubCommand;
-import net.ttk1.command.subcommand.VersionCommand;
+import net.ttk1.command.subcommand.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +34,9 @@ public class SubCommandManager {
         subCommands = new ArrayList<>();
         subCommands.add(new VersionCommand(plugin, playerManager));
         subCommands.add(new ListCommand(plugin, playerManager));
+        subCommands.add(new HideCommand(plugin, playerManager));
+        subCommands.add(new ShowCommand(plugin, playerManager));
+        subCommands.add(new StatusCommand(plugin, playerManager));
     }
 
     public List<SubCommand> getSubCommands() {

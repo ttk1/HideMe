@@ -148,7 +148,7 @@ public class HideMe extends JavaPlugin {
      * 指定したプレーヤーが隠れたプレーヤーを見えないようにする
      * @param player
      */
-    public void hideAll(Player player) {
+    public void hideOthers(Player player) {
         if (player.hasPermission("hideme.bypass")) {
             return;
         }

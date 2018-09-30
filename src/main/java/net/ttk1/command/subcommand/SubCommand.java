@@ -10,5 +10,5 @@ public interface SubCommand {
 
     void execute(CommandSender sender, String[] args);
 
-    Set<String> tabComplete(String[] args);
+    Set<String> tabComplete(CommandSender sender, String[] args);
 }

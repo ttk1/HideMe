@@ -37,7 +37,7 @@ public class SessionListener implements Listener {
         } else {
             plugin.showMe(event.getPlayer());
         }
-        plugin.hideAll(player);
+        plugin.hideOthers(player);
     }
 
     @EventHandler

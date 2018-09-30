@@ -40,7 +40,7 @@ public class HideMeTabCompleter implements TabCompleter {
         Set<String> candidateSet = new HashSet<>();
 
         for (SubCommand subCommand: subCommands) {
-            candidateSet.addAll(subCommand.tabComplete(args));
+            candidateSet.addAll(subCommand.tabComplete(sender, args));
         }
 
         return new ArrayList<>(candidateSet);

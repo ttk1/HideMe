@@ -39,6 +39,7 @@ public class HideMeCommandExecutor implements CommandExecutor {
             SubCommand matchedCommand = matchedCommands.get(0);
             matchedCommand.execute(sender, args);
         } else {
+            // コマンドがマッチしなかったときの処理
         }
 
         return true;

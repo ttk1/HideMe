@@ -2,11 +2,13 @@ name: ${name}
 version: ${version}
 main: net.ttk1.HideMe
 depend: [ProtocolLib]
+author: ttk1
+website: https://github.com/ttk1/HideMe
 
 commands:
   hideme:
     description: hideme command.
-    usage: /hideme
+    usage: /hideme <subcommand>
     aliases: hm
 
 permissions:
@@ -18,6 +20,8 @@ permissions:
     default: op
   hideme.status:
     default: op
+  hideme.status.player:
+    default: op
   hideme.hide:
     default: op
   hideme.hide.player:
@@ -25,4 +29,6 @@ permissions:
   hideme.show:
     default: op
   hideme.show.player:
+    default: op
+  hideme.bypass:
     default: op
