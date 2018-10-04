@@ -38,12 +38,12 @@ public class HideMeTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<SubCommand> subCommands = subCommandManager.getSubCommands();
-        Set<String> candidateSet = new HashSet<>();
+        Set<String> candidates = new HashSet<>();
 
         for (SubCommand subCommand: subCommands) {
-            candidateSet.addAll(subCommand.tabComplete(sender, args));
+            candidates.addAll(subCommand.tabComplete(sender, args));
         }
 
-        return new ArrayList<>(candidateSet);
+        return new ArrayList<>(candidates);
     }
 }

@@ -40,14 +40,14 @@ public class ListCommand implements SubCommand {
 
     @Override
     public Set<String> tabComplete(CommandSender sender, String[] args) {
-        HashSet<String> candidate = new HashSet<>();
+        HashSet<String> candidates = new HashSet<>();
         if (sender.hasPermission(PERMISSION)) {
             if (args.length == 0) {
-                candidate.add(SUB_COMMAND);
+                candidates.add(SUB_COMMAND);
             } else if (args.length == 1 && SUB_COMMAND.startsWith(args[0])) {
-                candidate.add(SUB_COMMAND);
+                candidates.add(SUB_COMMAND);
             }
         }
-        return candidate;
+        return candidates;
     }
 }
