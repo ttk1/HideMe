@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HidePlayerCommand implements SubCommand {
+public class HidePlayerCommand extends AbstractSubCommand {
     private final String SUB_COMMAND = "hide";
     private final String PERMISSION = "hideme.hide.player";
 
@@ -17,6 +17,7 @@ public class HidePlayerCommand implements SubCommand {
     private PlayerManager playerManager;
 
     public HidePlayerCommand(HideMe plugin, PlayerManager playerManager) {
+        super(plugin, playerManager);
         this.plugin = plugin;
         this.playerManager = playerManager;
     }
@@ -42,7 +43,7 @@ public class HidePlayerCommand implements SubCommand {
                 // オンラインプレーヤー
                 if(!playerManager.isHidden(player)) {
                     playerManager.addHiddenPlayer(player);
-                    plugin.hideMe(player);
+                    hidePlayer(player.getUniqueId().toString());
                     player.sendMessage("You are now hidden.");
                     sender.sendMessage("Player "+playerName+" is now hidden.");
                 } else {
@@ -73,7 +74,7 @@ public class HidePlayerCommand implements SubCommand {
                     candidates.add(SUB_COMMAND);
                 }
             } else if (args.length == 2) {
-                // プレフィックスが一致するプレーヤーを候補とする
+                // プレフィックスが一致するオンラインプレーヤーを候補とする
                 candidates.addAll(plugin.getServer().getOnlinePlayers().stream().map(Player::getName).filter(i -> i.startsWith(args[1])).collect(Collectors.toSet()));
             }
         }

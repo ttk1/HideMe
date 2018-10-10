@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.Set;
 
-public class StatusCommand implements SubCommand {
+public class StatusCommand extends AbstractSubCommand {
     private final String SUB_COMMAND = "status";
     private final String PERMISSION = "hideme.status";
 
@@ -17,6 +17,7 @@ public class StatusCommand implements SubCommand {
     private PlayerManager playerManager;
 
     public StatusCommand(HideMe plugin, PlayerManager playerManager) {
+        super(plugin, playerManager);
         this.plugin = plugin;
         this.playerManager = playerManager;
     }

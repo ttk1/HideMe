@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import java.util.HashSet;
 import java.util.Set;
 
-public class VersionCommand implements SubCommand {
+public class VersionCommand extends AbstractSubCommand {
     private final String SUB_COMMAND = "version";
     private final String PERMISSION = "hideme.version";
 
@@ -16,6 +16,7 @@ public class VersionCommand implements SubCommand {
     private PlayerManager playerManager;
 
     public VersionCommand(HideMe plugin, PlayerManager playerManager) {
+        super(plugin, playerManager);
         this.plugin = plugin;
         this.playerManager = playerManager;
     }

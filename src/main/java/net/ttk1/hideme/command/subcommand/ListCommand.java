@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ListCommand implements SubCommand {
+public class ListCommand extends AbstractSubCommand {
     private final String SUB_COMMAND = "list";
     private final String PERMISSION = "hideme.list";
 
@@ -16,6 +16,7 @@ public class ListCommand implements SubCommand {
     private PlayerManager playerManager;
 
     public ListCommand(HideMe plugin, PlayerManager playerManager) {
+        super(plugin, playerManager);
         this.plugin = plugin;
         this.playerManager = playerManager;
     }

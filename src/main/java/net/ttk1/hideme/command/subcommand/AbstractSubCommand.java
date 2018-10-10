@@ -1,62 +1,33 @@
-package net.ttk1.hideme.listener;
+package net.ttk1.hideme.command.subcommand;
 
-import com.google.inject.Inject;
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.api.PlayerManager;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.Set;
 import java.util.UUID;
 
-/**
- * プレーヤーのログイン・ログアウトイベントの処理
- */
-public class SessionListener implements Listener {
+public abstract class AbstractSubCommand {
     private HideMe plugin;
     private PlayerManager playerManager;
 
-    @Inject
-    private void setPlugin(HideMe plugin) {
+    public AbstractSubCommand(HideMe plugin, PlayerManager playerManager) {
         this.plugin = plugin;
-    }
-
-    @Inject
-    private void setPlayerManager(PlayerManager playerManager) {
         this.playerManager = playerManager;
     }
 
-    @EventHandler
-    public void onPlayerJoinEvent(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        if (playerManager.isHidden(player)) {
-            playerManager.login(player);
-            sendMsg(event.getJoinMessage());
-            event.setJoinMessage(null);
-            hidePlayer(player.getUniqueId().toString());
-        } else {
-            showPlayer(event.getPlayer().getUniqueId().toString());
-        }
-        hideOthers(player.getUniqueId().toString());
-    }
+    abstract boolean match(String[] args);
 
-    @EventHandler
-    public void onPlayerQuitEvent(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        if (playerManager.isHidden(player)) {
-            playerManager.logout(player);
-            sendMsg(event.getQuitMessage());
-            event.setQuitMessage(null);
-        }
-    }
+    abstract void execute(CommandSender sender, String[] args);
+
+    abstract Set<String> tabComplete(CommandSender sender, String[] args);
 
     /**
      * 指定したプレーヤーを他のプレーヤーから隠す
      * @param playerUUID プレーヤーのUUID String
      */
-    private void hidePlayer(String playerUUID) {
+    protected void hidePlayer(String playerUUID) {
         Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
 
         if (player != null) {
@@ -72,7 +43,7 @@ public class SessionListener implements Listener {
      * 指定したプレーヤーを他のプレーヤーから見えるようにする
      * @param playerUUID プレーヤーのUUID String
      */
-    private void showPlayer(String playerUUID) {
+    protected void showPlayer(String playerUUID) {
         Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
 
         if (player != null) {
@@ -89,7 +60,7 @@ public class SessionListener implements Listener {
      * ログインの度に実行する必要あり。
      * @param playerUUID プレーヤーのUUID String
      */
-    private void hideOthers(String playerUUID) {
+    protected void hideOthers(String playerUUID) {
         Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
 
         if (player == null || player.hasPermission("hideme.bypass")) {
@@ -107,7 +78,7 @@ public class SessionListener implements Listener {
      * ログイン・ログアウトメッセージの抑止をバイパスして送信する
      * @param msg バイパスするメッセージ
      */
-    private void sendMsg(String msg) {
+    protected void sendMsg(String msg) {
         for (Player player: plugin.getServer().getOnlinePlayers()) {
             if(player.hasPermission("hideme.bypass")) {
                 player.sendMessage(msg);

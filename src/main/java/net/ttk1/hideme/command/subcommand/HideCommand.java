@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HideCommand implements SubCommand {
+public class HideCommand extends AbstractSubCommand {
     private final String SUB_COMMAND = "hide";
     private final String PERMISSION = "hideme.hide";
 
@@ -17,6 +17,7 @@ public class HideCommand implements SubCommand {
     private PlayerManager playerManager;
 
     public HideCommand(HideMe plugin, PlayerManager playerManager) {
+        super(plugin, playerManager);
         this.plugin = plugin;
         this.playerManager = playerManager;
     }
@@ -37,7 +38,7 @@ public class HideCommand implements SubCommand {
                 Player player = (Player) sender;
                 if(!playerManager.isHidden(player)) {
                     playerManager.addHiddenPlayer(player);
-                    plugin.hideMe(player);
+                    hidePlayer(player.getUniqueId().toString());
                     player.sendMessage("You are now hidden.");
                 } else {
                     player.sendMessage("You are already hidden.");
