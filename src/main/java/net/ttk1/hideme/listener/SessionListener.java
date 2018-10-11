@@ -34,11 +34,11 @@ public class SessionListener implements Listener {
         if (playerManager.isHidden(player)) {
             sendMsg(event.getJoinMessage());
             event.setJoinMessage(null);
-            hidePlayer(player.getUniqueId().toString());
+            hidePlayer(player);
         } else {
-            showPlayer(event.getPlayer().getUniqueId().toString());
+            showPlayer(event.getPlayer());
         }
-        hideOthers(player.getUniqueId().toString());
+        hideOthers(player);
     }
 
     @EventHandler
@@ -52,15 +52,17 @@ public class SessionListener implements Listener {
 
     /**
      * 指定したプレーヤーを他のプレーヤーから隠す
-     * @param playerUUID プレーヤーのUUID String
+     * @param player プレーヤー
      */
-    private void hidePlayer(String playerUUID) {
-        Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
-
+    private void hidePlayer(Player player) {
         if (player != null) {
             for (Player p: plugin.getServer().getOnlinePlayers()) {
-                if (!player.equals(p) && !p.hasPermission("hideme.bypass")) {
-                    p.hidePlayer(plugin, player);
+                if (!player.equals(p)) {
+                    if (p.hasPermission("hideme.bypass")) {
+                        p.showPlayer(plugin, player);
+                    } else {
+                        p.hidePlayer(plugin, player);
+                    }
                 }
             }
         }
@@ -68,11 +70,9 @@ public class SessionListener implements Listener {
 
     /**
      * 指定したプレーヤーを他のプレーヤーから見えるようにする
-     * @param playerUUID プレーヤーのUUID String
+     * @param player プレーヤー
      */
-    private void showPlayer(String playerUUID) {
-        Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
-
+    private void showPlayer(Player player) {
         if (player != null) {
             for (Player p: plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p)) {
@@ -85,11 +85,9 @@ public class SessionListener implements Listener {
     /**
      * 指定したプレーヤーから"隠れた"状態のプレーヤーを見えないようにする。
      * ログインの度に実行する必要あり。
-     * @param playerUUID プレーヤーのUUID String
+     * @param player プレーヤー
      */
-    private void hideOthers(String playerUUID) {
-        Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
-
+    private void hideOthers(Player player) {
         if (player == null || player.hasPermission("hideme.bypass")) {
             return;
         }
