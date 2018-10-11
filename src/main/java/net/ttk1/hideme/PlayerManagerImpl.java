@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Predicates;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -126,7 +127,7 @@ public class PlayerManagerImpl implements PlayerManager {
 
     @Override
     public Set<OfflinePlayer> getOfflineHiddenPlayers() {
-        return Arrays.stream(plugin.getServer().getOfflinePlayers()).filter(this::isHidden).collect(Collectors.toSet());
+        return Arrays.stream(plugin.getServer().getOfflinePlayers()).filter(Predicates.not(OfflinePlayer::isOnline)).filter(this::isHidden).collect(Collectors.toSet());
     }
 
     @Override
