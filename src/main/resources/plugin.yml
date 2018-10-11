@@ -30,5 +30,7 @@ permissions:
     default: op
   hideme.show.player:
     default: op
+  hideme.reload:
+    default: op
   hideme.bypass:
     default: op

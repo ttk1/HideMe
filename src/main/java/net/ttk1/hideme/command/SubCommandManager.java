@@ -39,6 +39,7 @@ public class SubCommandManager {
         subCommands.add(new StatusCommand(plugin, playerManager));
         subCommands.add(new HidePlayerCommand(plugin, playerManager));
         subCommands.add(new ShowPlayerCommand(plugin, playerManager));
+        subCommands.add(new ReloadCommand(plugin, playerManager));
     }
 
     public List<SubCommand> getSubCommands() {
