@@ -55,8 +55,9 @@ public class HidePlayerCommand extends AbstractSubCommand {
                         if (!playerManager.isHidden(offlinePlayer)) {
                             playerManager.addHiddenPlayer(offlinePlayer);
                             sender.sendMessage("Player "+playerName+" is now hidden.");
+                        } else {
+                            sender.sendMessage("Player " + playerName + " is already hidden.");
                         }
-                        sender.sendMessage("Player "+playerName+" is already hidden.");
                         return;
                     }
                 }

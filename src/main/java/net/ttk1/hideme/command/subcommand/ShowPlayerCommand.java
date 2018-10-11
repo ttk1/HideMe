@@ -56,8 +56,9 @@ public class ShowPlayerCommand extends AbstractSubCommand {
                         if (playerManager.isHidden(offlinePlayer)) {
                             playerManager.removeHiddenPlayer(offlinePlayer);
                             sender.sendMessage("Player "+playerName+" is now visible.");
+                        } else {
+                            sender.sendMessage("Player "+playerName+" is already visible.");
                         }
-                        sender.sendMessage("Player "+playerName+" is already visible.");
                         return;
                     }
                 }
