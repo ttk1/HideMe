@@ -20,8 +20,12 @@ public abstract class AbstractSubCommand implements SubCommand {
     protected void hidePlayer(Player player) {
         if (player != null) {
             for (Player p: plugin.getServer().getOnlinePlayers()) {
-                if (!player.equals(p) && !p.hasPermission("hideme.bypass")) {
-                    p.hidePlayer(plugin, player);
+                if (!player.equals(p)) {
+                    if (p.hasPermission("hideme.bypass")) {
+                        p.showPlayer(plugin, player);
+                    } else {
+                        p.hidePlayer(plugin, player);
+                    }
                 }
             }
         }

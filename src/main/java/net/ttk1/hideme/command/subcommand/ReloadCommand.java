@@ -36,7 +36,11 @@ public class ReloadCommand extends AbstractSubCommand {
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
             for (Player player: plugin.getServer().getOnlinePlayers()) {
-                hideOthers(player);
+                if (playerManager.isHidden(player)) {
+                    hidePlayer(player);
+                } else {
+                    showPlayer(player);
+                }
             }
             sender.sendMessage("Reloaded!");
         } else {
