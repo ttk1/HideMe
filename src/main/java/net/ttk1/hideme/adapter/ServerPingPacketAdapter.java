@@ -1,4 +1,4 @@
-package net.ttk1.adapter;
+package net.ttk1.hideme.adapter;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -7,10 +7,11 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedServerPing;
 
 import com.google.inject.Inject;
-import net.ttk1.api.PlayerManager;
-import org.bukkit.entity.Player;
 
-import net.ttk1.HideMe;
+import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.HideMe;
+
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +44,12 @@ public class ServerPingPacketAdapter extends PacketAdapter {
     public void onPacketSending(PacketEvent event) {
         StructureModifier<WrappedServerPing> pings = event.getPacket().getServerPings();
         WrappedServerPing ping = pings.read(0);
+        int fakedPlayersOnline = ping.getPlayersOnline() - playerManager.getOnlineHiddenPlayers().size();
 
-        if (ping.getPlayersOnline() < playerManager.getOnlineHiddenPlayerCount()) {
+        if (fakedPlayersOnline < 0) {
             plugin.getLogger().warning("プレーヤー数が異常です");
         } else {
-            ping.setPlayersOnline(ping.getPlayersOnline() - playerManager.getOnlineHiddenPlayerCount());
+            ping.setPlayersOnline(fakedPlayersOnline);
         }
 
         List<Player> players = new ArrayList<>();
