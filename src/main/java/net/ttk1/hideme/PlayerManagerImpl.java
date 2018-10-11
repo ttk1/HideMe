@@ -2,16 +2,15 @@ package net.ttk1.hideme;
 
 import java.io.File;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import net.ttk1.hideme.api.PlayerManager;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -28,8 +27,7 @@ public class PlayerManagerImpl implements PlayerManager {
     private HideMe plugin;
     private File dataFile;
 
-    private Set<String> hiddenPlayers;
-    private Set<String> onlineHiddenPlayers;
+    private Set<String> hiddenPlayerUUIDs;
 
     //@Inject
     private void setPlugin(HideMe plugin) {
@@ -65,17 +63,15 @@ public class PlayerManagerImpl implements PlayerManager {
             FileConfiguration conf = new YamlConfiguration();
             try {
                 conf.load(dataFile);
-                hiddenPlayers = new HashSet<>(conf.getStringList(HIDDEN_PLAYERS_KEY));
+                hiddenPlayerUUIDs = new HashSet<>(conf.getStringList(HIDDEN_PLAYERS_KEY));
             } catch (Exception e) {
                 e.printStackTrace();
-                hiddenPlayers = new HashSet<>();
+                hiddenPlayerUUIDs = new HashSet<>();
             }
 
         } else {
-            hiddenPlayers = new HashSet<>();
+            hiddenPlayerUUIDs = new HashSet<>();
         }
-
-        onlineHiddenPlayers = new HashSet<>();
     }
 
     @Override
@@ -83,7 +79,7 @@ public class PlayerManagerImpl implements PlayerManager {
         if (dataFile.exists()) {
             FileConfiguration conf = new YamlConfiguration();
             try {
-                conf.set(HIDDEN_PLAYERS_KEY, new ArrayList<String>(hiddenPlayers));
+                conf.set(HIDDEN_PLAYERS_KEY, new ArrayList<String>(hiddenPlayerUUIDs));
                 conf.save(dataFile);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -93,85 +89,48 @@ public class PlayerManagerImpl implements PlayerManager {
 
     @Override
     public void addHiddenPlayer(Player player){
-        String uuid = player.getUniqueId().toString();
-        if (!isHidden(player)) {
-            hiddenPlayers.add(uuid);
-            if(player.isOnline()){
-                onlineHiddenPlayers.add(uuid);
-            }
-        }
+        hiddenPlayerUUIDs.add(player.getUniqueId().toString());
+    }
+
+    @Override
+    public void addHiddenPlayer(OfflinePlayer offlinePlayer){
+        hiddenPlayerUUIDs.add(offlinePlayer.getUniqueId().toString());
     }
 
     @Override
     public void removeHiddenPlayer(Player player){
-        String uuid = player.getUniqueId().toString();
-        if (isHidden(player)) {
-            hiddenPlayers.remove(uuid);
-            if(player.isOnline()){
-                onlineHiddenPlayers.remove(uuid);
-            }
-        }
+        hiddenPlayerUUIDs.remove(player.getUniqueId().toString());
     }
 
     @Override
-    public void login(Player player){
-        String uuid = player.getUniqueId().toString();
-        if (isHidden(player)){
-            onlineHiddenPlayers.add(uuid);
-        }
-    }
-
-    @Override
-    public void logout(Player player){
-        String uuid = player.getUniqueId().toString();
-        if (isHidden(player)){
-            onlineHiddenPlayers.remove(uuid);
-        }
+    public void removeHiddenPlayer(OfflinePlayer offlinePlayer){
+        hiddenPlayerUUIDs.remove(offlinePlayer.getUniqueId().toString());
     }
 
     @Override
     public boolean isHidden(Player player) {
         String uuid = player.getUniqueId().toString();
-        return hiddenPlayers.contains(uuid);
+        return hiddenPlayerUUIDs.contains(uuid);
     }
 
     @Override
-    public Set<String> getHiddenPlayerUUIDs(){
-        return hiddenPlayers;
+    public boolean isHidden(OfflinePlayer offlinePlayer) {
+        String uuid = offlinePlayer.getUniqueId().toString();
+        return hiddenPlayerUUIDs.contains(uuid);
     }
 
     @Override
-    public Set<String> getHiddenPlayerNames() {
-        Set<String> hiddenPlayerNames = new HashSet<>();
-        for (String playerUUID: hiddenPlayers) {
-            String playerName = plugin.getServer().getPlayer(UUID.fromString(playerUUID)).getName();
-            hiddenPlayerNames.add(playerName);
-        }
-        return hiddenPlayerNames;
+    public Set<Player> getOnlineHiddenPlayers() {
+        return plugin.getServer().getOnlinePlayers().stream().filter(this::isHidden).collect(Collectors.toSet());
     }
 
     @Override
-    public Set<String> getOnlineHiddenPlayerUUIDs(){
-        return onlineHiddenPlayers;
+    public Set<OfflinePlayer> getOfflineHiddenPlayers() {
+        return Arrays.stream(plugin.getServer().getOfflinePlayers()).filter(this::isHidden).collect(Collectors.toSet());
     }
 
     @Override
-    public Set<String> getOnlineHiddenPlayerNames() {
-        Set<String> onlineHiddenPlayerNames = new HashSet<>();
-        for (String playerUUID: onlineHiddenPlayers) {
-            String playerName = plugin.getServer().getPlayer(UUID.fromString(playerUUID)).getName();
-            onlineHiddenPlayerNames.add(playerName);
-        }
-        return onlineHiddenPlayerNames;
-    }
-
-    @Override
-    public int getHiddenPlayerCount(){
-        return hiddenPlayers.size();
-    }
-
-    @Override
-    public int getOnlineHiddenPlayerCount(){
-        return onlineHiddenPlayers.size();
+    public Set<String> getHiddenPlayerUUIDs() {
+        return hiddenPlayerUUIDs;
     }
 }

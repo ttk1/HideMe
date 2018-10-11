@@ -38,7 +38,7 @@ public class HideCommand extends AbstractSubCommand {
                 Player player = (Player) sender;
                 if(!playerManager.isHidden(player)) {
                     playerManager.addHiddenPlayer(player);
-                    hidePlayer(player.getUniqueId().toString());
+                    hidePlayer(player);
                     player.sendMessage("You are now hidden.");
                 } else {
                     player.sendMessage("You are already hidden.");

@@ -32,7 +32,6 @@ public class SessionListener implements Listener {
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (playerManager.isHidden(player)) {
-            playerManager.login(player);
             sendMsg(event.getJoinMessage());
             event.setJoinMessage(null);
             hidePlayer(player.getUniqueId().toString());
@@ -46,7 +45,6 @@ public class SessionListener implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (playerManager.isHidden(player)) {
-            playerManager.logout(player);
             sendMsg(event.getQuitMessage());
             event.setQuitMessage(null);
         }

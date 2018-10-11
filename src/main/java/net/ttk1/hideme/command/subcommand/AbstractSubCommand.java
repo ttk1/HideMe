@@ -2,13 +2,9 @@ package net.ttk1.hideme.command.subcommand;
 
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.api.PlayerManager;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
-import java.util.UUID;
-
-public abstract class AbstractSubCommand {
+public abstract class AbstractSubCommand implements SubCommand {
     private HideMe plugin;
     private PlayerManager playerManager;
 
@@ -17,19 +13,11 @@ public abstract class AbstractSubCommand {
         this.playerManager = playerManager;
     }
 
-    abstract boolean match(String[] args);
-
-    abstract void execute(CommandSender sender, String[] args);
-
-    abstract Set<String> tabComplete(CommandSender sender, String[] args);
-
     /**
      * 指定したプレーヤーを他のプレーヤーから隠す
-     * @param playerUUID プレーヤーのUUID String
+     * @param player プレーヤー
      */
-    protected void hidePlayer(String playerUUID) {
-        Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
-
+    protected void hidePlayer(Player player) {
         if (player != null) {
             for (Player p: plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p) && !p.hasPermission("hideme.bypass")) {
@@ -41,11 +29,9 @@ public abstract class AbstractSubCommand {
 
     /**
      * 指定したプレーヤーを他のプレーヤーから見えるようにする
-     * @param playerUUID プレーヤーのUUID String
+     * @param player プレーヤー
      */
-    protected void showPlayer(String playerUUID) {
-        Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
-
+    protected void showPlayer(Player player) {
         if (player != null) {
             for (Player p: plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p)) {
@@ -58,11 +44,9 @@ public abstract class AbstractSubCommand {
     /**
      * 指定したプレーヤーから"隠れた"状態のプレーヤーを見えないようにする。
      * ログインの度に実行する必要あり。
-     * @param playerUUID プレーヤーのUUID String
+     * @param player プレーヤー
      */
-    protected void hideOthers(String playerUUID) {
-        Player player = plugin.getServer().getPlayer(UUID.fromString(playerUUID));
-
+    protected void hideOthers(Player player) {
         if (player == null || player.hasPermission("hideme.bypass")) {
             return;
         }

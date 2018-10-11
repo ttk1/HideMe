@@ -38,7 +38,7 @@ public class ShowCommand extends AbstractSubCommand {
                 Player player = (Player) sender;
                 if(playerManager.isHidden(player)) {
                     playerManager.removeHiddenPlayer(player);
-                    showPlayer(player.getUniqueId().toString());
+                    showPlayer(player);
                     player.sendMessage("You are now visible.");
                 } else {
                     player.sendMessage("You are already visible.");

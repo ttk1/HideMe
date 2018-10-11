@@ -3,10 +3,13 @@ package net.ttk1.hideme.command.subcommand;
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.api.PlayerManager;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ListCommand extends AbstractSubCommand {
     private final String SUB_COMMAND = "list";
@@ -33,7 +36,8 @@ public class ListCommand extends AbstractSubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
-            sender.sendMessage(playerManager.getHiddenPlayerNames().toString());
+            sender.sendMessage("Online:"+playerManager.getOnlineHiddenPlayers().stream().map(Player::getName).collect(Collectors.toList()).toString());
+            sender.sendMessage("Offline:"+playerManager.getOfflineHiddenPlayers().stream().map(OfflinePlayer::getName).collect(Collectors.toList()).toString());
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
         }

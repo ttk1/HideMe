@@ -11,7 +11,6 @@ import net.ttk1.hideme.listener.SessionListener;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -84,6 +83,7 @@ public class HideMe extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        playerManager.save();
         getLogger().info("HideMe disabled");
     }
 
