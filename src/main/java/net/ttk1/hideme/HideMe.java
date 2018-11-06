@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 
 import com.google.inject.Injector;
 
-import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.api.HideMeManager;
 import net.ttk1.hideme.adapter.ServerPingPacketAdapter;
 import net.ttk1.hideme.listener.SessionListener;
 
@@ -22,7 +22,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 public class HideMe extends JavaPlugin {
     private ServerPingPacketAdapter serverPingPacketAdapter;
     private SessionListener sessionListener;
-    private PlayerManager playerManager;
+    private HideMeManager hideMeManager;
 
     private CommandExecutor commandExecutor;
     private TabCompleter tabCompleter;
@@ -38,8 +38,8 @@ public class HideMe extends JavaPlugin {
     }
 
     @Inject
-    private void setPlayerManager(PlayerManager playerManager) {
-        this.playerManager = playerManager;
+    private void setHideMeManager(HideMeManager hideMeManager) {
+        this.hideMeManager = hideMeManager;
     }
 
     @Inject
@@ -62,18 +62,14 @@ public class HideMe extends JavaPlugin {
         Injector injector = module.createInjector();
         injector.injectMembers(this);
 
-        // event listenerの登録
-        {
-            getServer().getPluginManager().registerEvents(sessionListener, this);
-            ProtocolLibrary.getProtocolManager().addPacketListener(serverPingPacketAdapter);
-        }
+        // event listener
+        getServer().getPluginManager().registerEvents(sessionListener, this);
+        ProtocolLibrary.getProtocolManager().addPacketListener(serverPingPacketAdapter);
 
         // command
-        {
-            PluginCommand command = getCommand("hideme");
-            command.setExecutor(commandExecutor);
-            command.setTabCompleter(tabCompleter);
-        }
+        PluginCommand command = getCommand("hideme");
+        command.setExecutor(commandExecutor);
+        command.setTabCompleter(tabCompleter);
 
         // クラスローダーを元に戻す
         Thread.currentThread().setContextClassLoader(currentClassLoader);
@@ -83,14 +79,14 @@ public class HideMe extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        playerManager.save();
+        hideMeManager.save();
         getLogger().info("HideMe disabled");
     }
 
     /**
      * @return HiddenPlayerManager
      */
-    public PlayerManager getManager() {
-        return playerManager;
+    public HideMeManager getManager() {
+        return hideMeManager;
     }
 }

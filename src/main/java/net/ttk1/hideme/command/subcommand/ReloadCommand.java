@@ -1,26 +1,23 @@
 package net.ttk1.hideme.command.subcommand;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.PlayerManager;
-import org.bukkit.OfflinePlayer;
+import net.ttk1.hideme.api.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class ReloadCommand extends AbstractSubCommand {
+public class ReloadCommand implements SubCommand {
     private final String SUB_COMMAND = "reload";
     private final String PERMISSION = "hideme.reload";
 
     private HideMe plugin;
-    private PlayerManager playerManager;
+    private HideMeManager hideMeManager;
 
-    public ReloadCommand(HideMe plugin, PlayerManager playerManager) {
-        super(plugin, playerManager);
+    public ReloadCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
-        this.playerManager = playerManager;
+        this.hideMeManager = hideMeManager;
     }
 
     @Override
@@ -36,11 +33,7 @@ public class ReloadCommand extends AbstractSubCommand {
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
             for (Player player: plugin.getServer().getOnlinePlayers()) {
-                if (playerManager.isHidden(player)) {
-                    hidePlayer(player);
-                } else {
-                    showPlayer(player);
-                }
+                hideMeManager.refresh(player);
             }
             sender.sendMessage("Reloaded!");
         } else {
