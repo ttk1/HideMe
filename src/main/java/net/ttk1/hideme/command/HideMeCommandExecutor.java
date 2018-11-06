@@ -2,8 +2,6 @@ package net.ttk1.hideme.command;
 
 import com.google.inject.Inject;
 
-import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.PlayerManager;
 import net.ttk1.hideme.command.subcommand.SubCommand;
 
 import org.bukkit.command.Command;
@@ -14,19 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HideMeCommandExecutor implements CommandExecutor {
-    private HideMe plugin;
-    private PlayerManager playerManager;
     private SubCommandManager subCommandManager;
-
-    @Inject
-    private void setPlugin(HideMe plugin) {
-        this.plugin = plugin;
-    }
-
-    @Inject
-    private void setPlayerManager(PlayerManager playerManager) {
-        this.playerManager = playerManager;
-    }
 
     @Inject
     private void setSubCommandManager(SubCommandManager subCommandManager) {

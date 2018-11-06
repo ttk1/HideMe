@@ -1,7 +1,7 @@
 package net.ttk1.hideme.command.subcommand;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.api.HideMeManager;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,17 +9,16 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ShowCommand extends AbstractSubCommand {
+public class ShowCommand implements SubCommand {
     private final String SUB_COMMAND = "show";
     private final String PERMISSION = "hideme.show";
 
     private HideMe plugin;
-    private PlayerManager playerManager;
+    private HideMeManager hideMeManager;
 
-    public ShowCommand(HideMe plugin, PlayerManager playerManager) {
-        super(plugin, playerManager);
+    public ShowCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
-        this.playerManager = playerManager;
+        this.hideMeManager = hideMeManager;
     }
 
     @Override
@@ -36,9 +35,8 @@ public class ShowCommand extends AbstractSubCommand {
         if (sender.hasPermission(PERMISSION)) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if(playerManager.isHidden(player)) {
-                    playerManager.removeHiddenPlayer(player);
-                    showPlayer(player);
+                if(hideMeManager.isHidden(player)) {
+                    hideMeManager.showPlayer(player);
                     player.sendMessage("You are now visible.");
                 } else {
                     player.sendMessage("You are already visible.");

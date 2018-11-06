@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.api.HideMeManager;
 import net.ttk1.hideme.command.subcommand.*;
 
 import java.util.ArrayList;
@@ -13,33 +13,18 @@ import java.util.List;
 @Singleton
 public class SubCommandManager {
     private List<SubCommand> subCommands;
-    private HideMe plugin;
-    private PlayerManager playerManager;
-
-    //@Inject
-    private void setPlugin(HideMe plugin) {
-        this.plugin = plugin;
-    }
-
-    //@Inject
-    private void setPlayerManager(PlayerManager playerManager) {
-        this.playerManager = playerManager;
-    }
 
     @Inject
-    public SubCommandManager(HideMe plugin, PlayerManager playerManager) {
-        setPlugin(plugin);
-        setPlayerManager(playerManager);
-
+    public SubCommandManager(HideMe plugin, HideMeManager hideMeManager) {
         subCommands = new ArrayList<>();
-        subCommands.add(new VersionCommand(plugin, playerManager));
-        subCommands.add(new ListCommand(plugin, playerManager));
-        subCommands.add(new HideCommand(plugin, playerManager));
-        subCommands.add(new ShowCommand(plugin, playerManager));
-        subCommands.add(new StatusCommand(plugin, playerManager));
-        subCommands.add(new HidePlayerCommand(plugin, playerManager));
-        subCommands.add(new ShowPlayerCommand(plugin, playerManager));
-        subCommands.add(new ReloadCommand(plugin, playerManager));
+        subCommands.add(new VersionCommand(plugin, hideMeManager));
+        subCommands.add(new ListCommand(plugin, hideMeManager));
+        subCommands.add(new HideCommand(plugin, hideMeManager));
+        subCommands.add(new ShowCommand(plugin, hideMeManager));
+        subCommands.add(new StatusCommand(plugin, hideMeManager));
+        subCommands.add(new HidePlayerCommand(plugin, hideMeManager));
+        subCommands.add(new ShowPlayerCommand(plugin, hideMeManager));
+        subCommands.add(new ReloadCommand(plugin, hideMeManager));
     }
 
     public List<SubCommand> getSubCommands() {

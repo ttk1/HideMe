@@ -1,27 +1,26 @@
 package net.ttk1.hideme.command.subcommand;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.api.HideMeManager;
 
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class ListCommand extends AbstractSubCommand {
+public class ListCommand implements SubCommand {
     private final String SUB_COMMAND = "list";
     private final String PERMISSION = "hideme.list";
 
     private HideMe plugin;
-    private PlayerManager playerManager;
+    private HideMeManager hideMeManager;
 
-    public ListCommand(HideMe plugin, PlayerManager playerManager) {
-        super(plugin, playerManager);
+    public ListCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
-        this.playerManager = playerManager;
+        this.hideMeManager = hideMeManager;
     }
 
     @Override
@@ -36,8 +35,8 @@ public class ListCommand extends AbstractSubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
-            sender.sendMessage("Online:"+playerManager.getOnlineHiddenPlayers().stream().map(Player::getName).collect(Collectors.toList()).toString());
-            sender.sendMessage("Offline:"+playerManager.getOfflineHiddenPlayers().stream().map(OfflinePlayer::getName).collect(Collectors.toList()).toString());
+            sender.sendMessage("Online:"+ hideMeManager.getHiddenPlayers().stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getName).collect(Collectors.toList()).toString());
+            sender.sendMessage("Offline:"+ hideMeManager.getHiddenPlayers().stream().filter(((Predicate<OfflinePlayer>) OfflinePlayer::isOnline).negate()).map(OfflinePlayer::getName).collect(Collectors.toList()).toString());
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
         }

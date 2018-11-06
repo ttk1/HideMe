@@ -1,7 +1,7 @@
 package net.ttk1.hideme.command.subcommand;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.api.HideMeManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,17 +9,16 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HidePlayerCommand extends AbstractSubCommand {
+public class HidePlayerCommand implements SubCommand {
     private final String SUB_COMMAND = "hide";
     private final String PERMISSION = "hideme.hide.player";
 
     private HideMe plugin;
-    private PlayerManager playerManager;
+    private HideMeManager hideMeManager;
 
-    public HidePlayerCommand(HideMe plugin, PlayerManager playerManager) {
-        super(plugin, playerManager);
+    public HidePlayerCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
-        this.playerManager = playerManager;
+        this.hideMeManager = hideMeManager;
     }
 
     @Override
@@ -40,9 +39,8 @@ public class HidePlayerCommand extends AbstractSubCommand {
 
             if (player != null) {
                 // オンラインプレーヤー
-                if(!playerManager.isHidden(player)) {
-                    playerManager.addHiddenPlayer(player);
-                    hidePlayer(player);
+                if(!hideMeManager.isHidden(player)) {
+                    hideMeManager.hidePlayer(player);
                     player.sendMessage("You are now hidden.");
                     sender.sendMessage("Player "+playerName+" is now hidden.");
                 } else {
@@ -52,8 +50,8 @@ public class HidePlayerCommand extends AbstractSubCommand {
                 // オフラインプレーヤー
                 for (OfflinePlayer offlinePlayer: plugin.getServer().getOfflinePlayers()) {
                     if (offlinePlayer.getName().equals(playerName)) {
-                        if (!playerManager.isHidden(offlinePlayer)) {
-                            playerManager.addHiddenPlayer(offlinePlayer);
+                        if (!hideMeManager.isHidden(offlinePlayer)) {
+                            hideMeManager.hidePlayer(offlinePlayer);
                             sender.sendMessage("Player "+playerName+" is now hidden.");
                         } else {
                             sender.sendMessage("Player " + playerName + " is already hidden.");

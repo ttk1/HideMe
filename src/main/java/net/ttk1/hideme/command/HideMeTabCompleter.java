@@ -2,8 +2,6 @@ package net.ttk1.hideme.command;
 
 import com.google.inject.Inject;
 
-import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.PlayerManager;
 import net.ttk1.hideme.command.subcommand.SubCommand;
 
 import org.bukkit.command.Command;
@@ -16,19 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 public class HideMeTabCompleter implements TabCompleter {
-    private HideMe plugin;
-    private PlayerManager playerManager;
     private SubCommandManager subCommandManager;
-
-    @Inject
-    private void setPlugin(HideMe plugin) {
-        this.plugin = plugin;
-    }
-
-    @Inject
-    private void setPlayerManager(PlayerManager playerManager) {
-        this.playerManager = playerManager;
-    }
 
     @Inject
     private void setSubCommandManager(SubCommandManager subCommandManager) {

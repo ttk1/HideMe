@@ -1,24 +1,23 @@
 package net.ttk1.hideme.command.subcommand;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.api.HideMeManager;
 
 import org.bukkit.command.CommandSender;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class VersionCommand extends AbstractSubCommand {
+public class VersionCommand implements SubCommand {
     private final String SUB_COMMAND = "version";
     private final String PERMISSION = "hideme.version";
 
     private HideMe plugin;
-    private PlayerManager playerManager;
+    private HideMeManager hideMeManager;
 
-    public VersionCommand(HideMe plugin, PlayerManager playerManager) {
-        super(plugin, playerManager);
+    public VersionCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
-        this.playerManager = playerManager;
+        this.hideMeManager = hideMeManager;
     }
 
     @Override

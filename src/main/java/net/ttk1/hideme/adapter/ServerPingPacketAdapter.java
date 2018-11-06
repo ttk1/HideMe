@@ -8,9 +8,10 @@ import com.comphenix.protocol.wrappers.WrappedServerPing;
 
 import com.google.inject.Inject;
 
-import net.ttk1.hideme.api.PlayerManager;
+import net.ttk1.hideme.api.HideMeManager;
 import net.ttk1.hideme.HideMe;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class ServerPingPacketAdapter extends PacketAdapter {
     private HideMe plugin;
-    private PlayerManager playerManager;
+    private HideMeManager hideMeManager;
 
     //@Inject
     private void setPlugin(HideMe plugin) {
@@ -29,22 +30,22 @@ public class ServerPingPacketAdapter extends PacketAdapter {
     }
 
     //@Inject
-    private void setPlayerManager(PlayerManager playerManager) {
-        this.playerManager = playerManager;
+    private void setHideMeManager(HideMeManager hideMeManager) {
+        this.hideMeManager = hideMeManager;
     }
 
     @Inject
     public ServerPingPacketAdapter(HideMe plugin) {
         super(plugin, PacketType.Status.Server.SERVER_INFO);
         setPlugin(plugin);
-        setPlayerManager(plugin.getManager());
+        setHideMeManager(plugin.getManager());
     }
 
     @Override
     public void onPacketSending(PacketEvent event) {
         StructureModifier<WrappedServerPing> pings = event.getPacket().getServerPings();
         WrappedServerPing ping = pings.read(0);
-        int fakedPlayersOnline = ping.getPlayersOnline() - playerManager.getOnlineHiddenPlayers().size();
+        int fakedPlayersOnline = ping.getPlayersOnline() - (int) hideMeManager.getHiddenPlayers().stream().filter(OfflinePlayer::isOnline).count();
 
         if (fakedPlayersOnline < 0) {
             plugin.getLogger().warning("プレーヤー数が異常です");
@@ -54,7 +55,7 @@ public class ServerPingPacketAdapter extends PacketAdapter {
 
         List<Player> players = new ArrayList<>();
         for (Player player: plugin.getServer().getOnlinePlayers()){
-            if (!playerManager.isHidden(player)){
+            if (!hideMeManager.isHidden(player)){
                 players.add(player);
             }
         }
