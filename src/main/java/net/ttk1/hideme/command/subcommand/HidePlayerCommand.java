@@ -6,15 +6,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HidePlayerCommand implements SubCommand {
     private final String SUB_COMMAND = "hide";
     private final String PERMISSION = "hideme.hide.player";
 
-    private HideMe plugin;
-    private HideMeManager hideMeManager;
+    private final HideMe plugin;
+    private final HideMeManager hideMeManager;
 
     public HidePlayerCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
@@ -23,11 +24,7 @@ public class HidePlayerCommand implements SubCommand {
 
     @Override
     public boolean match(String[] args) {
-        if (args.length == 2 && args[0].equals(SUB_COMMAND)) {
-            return true;
-        } else {
-            return false;
-        }
+        return args.length == 2 && args[0].equals(SUB_COMMAND);
     }
 
     @Override
@@ -39,20 +36,20 @@ public class HidePlayerCommand implements SubCommand {
 
             if (player != null) {
                 // オンラインプレーヤー
-                if(!hideMeManager.isHidden(player)) {
+                if (!hideMeManager.isHidden(player)) {
                     hideMeManager.hidePlayer(player);
                     player.sendMessage("You are now hidden.");
-                    sender.sendMessage("Player "+playerName+" is now hidden.");
+                    sender.sendMessage("Player " + playerName + " is now hidden.");
                 } else {
-                    sender.sendMessage("Player "+playerName+" is already hidden.");
+                    sender.sendMessage("Player " + playerName + " is already hidden.");
                 }
             } else {
                 // オフラインプレーヤー
-                for (OfflinePlayer offlinePlayer: plugin.getServer().getOfflinePlayers()) {
+                for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
                     if (offlinePlayer.getName().equals(playerName)) {
                         if (!hideMeManager.isHidden(offlinePlayer)) {
                             hideMeManager.hidePlayer(offlinePlayer);
-                            sender.sendMessage("Player "+playerName+" is now hidden.");
+                            sender.sendMessage("Player " + playerName + " is now hidden.");
                         } else {
                             sender.sendMessage("Player " + playerName + " is already hidden.");
                         }
@@ -61,7 +58,7 @@ public class HidePlayerCommand implements SubCommand {
                 }
 
                 // not found
-                sender.sendMessage("Player "+playerName+" not found.");
+                sender.sendMessage("Player " + playerName + " not found.");
             }
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");

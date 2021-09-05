@@ -1,42 +1,37 @@
 package net.ttk1.hideme;
 
-import java.io.File;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
 import net.ttk1.hideme.api.HideMeManager;
-
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * 隠れたプレーヤーを管理するクラス
  */
 
-@Singleton
 public class HideMeManagerImpl implements HideMeManager {
     private static final String HIDDEN_PLAYERS = "hidden_players.yml";
     private static final String HIDDEN_PLAYERS_KEY = "hidden_players";
     private static final String BYPASS_PERMISSION = "hideme.bypass";
 
     private HideMe plugin;
-    private File dataFile;
+    private final File dataFile;
 
     private Set<String> hiddenPlayerUUIDs;
 
-    //@Inject
     private void setPlugin(HideMe plugin) {
         this.plugin = plugin;
     }
 
-    @Inject
-    public HideMeManagerImpl(HideMe plugin){
+    public HideMeManagerImpl(HideMe plugin) {
         setPlugin(plugin);
 
         File path = plugin.getDataFolder();
@@ -92,7 +87,7 @@ public class HideMeManagerImpl implements HideMeManager {
     public void hidePlayer(Player player) {
         if (player != null) {
             addHiddenPlayer(player.getUniqueId().toString());
-            for (Player p: plugin.getServer().getOnlinePlayers()) {
+            for (Player p : plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p)) {
                     if (p.hasPermission(BYPASS_PERMISSION)) {
                         p.showPlayer(plugin, player);
@@ -119,7 +114,7 @@ public class HideMeManagerImpl implements HideMeManager {
     public void showPlayer(Player player) {
         if (player != null) {
             removeHiddenPlayer(player.getUniqueId().toString());
-            for (Player p: plugin.getServer().getOnlinePlayers()) {
+            for (Player p : plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p)) {
                     p.showPlayer(plugin, player);
                 }
@@ -141,7 +136,7 @@ public class HideMeManagerImpl implements HideMeManager {
     @Override
     public void refresh(Player player) {
         if (player != null) {
-            for (Player p: plugin.getServer().getOnlinePlayers()) {
+            for (Player p : plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p)) {
                     if (isHidden(p) && !player.hasPermission(BYPASS_PERMISSION)) {
                         player.hidePlayer(plugin, p);
@@ -165,8 +160,8 @@ public class HideMeManagerImpl implements HideMeManager {
 
     @Override
     public void bypassMessage(String message) {
-        for (Player player: plugin.getServer().getOnlinePlayers()) {
-            if(player.hasPermission(BYPASS_PERMISSION)) {
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (player.hasPermission(BYPASS_PERMISSION)) {
                 player.sendMessage(message);
             }
         }
@@ -177,11 +172,11 @@ public class HideMeManagerImpl implements HideMeManager {
         return Arrays.stream(plugin.getServer().getOfflinePlayers()).filter(this::isHidden).collect(Collectors.toSet());
     }
 
-    private void addHiddenPlayer(String playerUUID){
+    private void addHiddenPlayer(String playerUUID) {
         hiddenPlayerUUIDs.add(playerUUID);
     }
 
-    private void removeHiddenPlayer(String playerUUID){
+    private void removeHiddenPlayer(String playerUUID) {
         hiddenPlayerUUIDs.remove(playerUUID);
     }
 }

@@ -1,6 +1,5 @@
 package net.ttk1.hideme.listener;
 
-import com.google.inject.Inject;
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.api.HideMeManager;
 import org.bukkit.entity.Player;
@@ -16,12 +15,10 @@ public class SessionListener implements Listener {
     private HideMe plugin;
     private HideMeManager hideMeManager;
 
-    @Inject
     private void setPlugin(HideMe plugin) {
         this.plugin = plugin;
     }
 
-    @Inject
     private void setHideMeManager(HideMeManager hideMeManager) {
         this.hideMeManager = hideMeManager;
     }

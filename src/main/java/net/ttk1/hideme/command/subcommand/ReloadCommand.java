@@ -12,8 +12,8 @@ public class ReloadCommand implements SubCommand {
     private final String SUB_COMMAND = "reload";
     private final String PERMISSION = "hideme.reload";
 
-    private HideMe plugin;
-    private HideMeManager hideMeManager;
+    private final HideMe plugin;
+    private final HideMeManager hideMeManager;
 
     public ReloadCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
@@ -22,17 +22,13 @@ public class ReloadCommand implements SubCommand {
 
     @Override
     public boolean match(String[] args) {
-        if (args.length == 1 && args[0].equals(SUB_COMMAND)) {
-            return true;
-        } else {
-            return false;
-        }
+        return args.length == 1 && args[0].equals(SUB_COMMAND);
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
-            for (Player player: plugin.getServer().getOnlinePlayers()) {
+            for (Player player : plugin.getServer().getOnlinePlayers()) {
                 hideMeManager.refresh(player);
             }
             sender.sendMessage("Reloaded!");

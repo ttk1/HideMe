@@ -5,12 +5,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedServerPing;
-
-import com.google.inject.Inject;
-
-import net.ttk1.hideme.api.HideMeManager;
 import net.ttk1.hideme.HideMe;
-
+import net.ttk1.hideme.api.HideMeManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -24,17 +20,14 @@ public class ServerPingPacketAdapter extends PacketAdapter {
     private HideMe plugin;
     private HideMeManager hideMeManager;
 
-    //@Inject
     private void setPlugin(HideMe plugin) {
         this.plugin = plugin;
     }
 
-    //@Inject
     private void setHideMeManager(HideMeManager hideMeManager) {
         this.hideMeManager = hideMeManager;
     }
 
-    @Inject
     public ServerPingPacketAdapter(HideMe plugin) {
         super(plugin, PacketType.Status.Server.SERVER_INFO);
         setPlugin(plugin);
@@ -54,8 +47,8 @@ public class ServerPingPacketAdapter extends PacketAdapter {
         }
 
         List<Player> players = new ArrayList<>();
-        for (Player player: plugin.getServer().getOnlinePlayers()){
-            if (!hideMeManager.isHidden(player)){
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (!hideMeManager.isHidden(player)) {
                 players.add(player);
             }
         }

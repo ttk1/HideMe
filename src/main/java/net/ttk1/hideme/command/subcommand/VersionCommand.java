@@ -2,7 +2,6 @@ package net.ttk1.hideme.command.subcommand;
 
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.api.HideMeManager;
-
 import org.bukkit.command.CommandSender;
 
 import java.util.HashSet;
@@ -12,8 +11,8 @@ public class VersionCommand implements SubCommand {
     private final String SUB_COMMAND = "version";
     private final String PERMISSION = "hideme.version";
 
-    private HideMe plugin;
-    private HideMeManager hideMeManager;
+    private final HideMe plugin;
+    private final HideMeManager hideMeManager;
 
     public VersionCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
@@ -22,11 +21,7 @@ public class VersionCommand implements SubCommand {
 
     @Override
     public boolean match(String[] args) {
-        if (args.length == 1 && args[0].equals(SUB_COMMAND)) {
-            return true;
-        } else {
-            return false;
-        }
+        return args.length == 1 && args[0].equals(SUB_COMMAND);
     }
 
     @Override

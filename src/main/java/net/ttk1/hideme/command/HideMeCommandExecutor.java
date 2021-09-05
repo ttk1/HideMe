@@ -1,9 +1,6 @@
 package net.ttk1.hideme.command;
 
-import com.google.inject.Inject;
-
 import net.ttk1.hideme.command.subcommand.SubCommand;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +11,6 @@ import java.util.stream.Collectors;
 public class HideMeCommandExecutor implements CommandExecutor {
     private SubCommandManager subCommandManager;
 
-    @Inject
     private void setSubCommandManager(SubCommandManager subCommandManager) {
         this.subCommandManager = subCommandManager;
     }
@@ -30,7 +26,6 @@ public class HideMeCommandExecutor implements CommandExecutor {
             // コマンドがマッチしなかったときの処理
             sender.sendMessage("Command not found!");
         }
-
         return true;
     }
 }

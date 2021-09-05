@@ -14,8 +14,8 @@ public class ShowPlayerCommand implements SubCommand {
     private final String SUB_COMMAND = "show";
     private final String PERMISSION = "hideme.show.player";
 
-    private HideMe plugin;
-    private HideMeManager hideMeManager;
+    private final HideMe plugin;
+    private final HideMeManager hideMeManager;
 
     public ShowPlayerCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
@@ -24,11 +24,7 @@ public class ShowPlayerCommand implements SubCommand {
 
     @Override
     public boolean match(String[] args) {
-        if (args.length == 2 && args[0].equals(SUB_COMMAND)) {
-            return true;
-        } else {
-            return false;
-        }
+        return args.length == 2 && args[0].equals(SUB_COMMAND);
     }
 
     @Override
@@ -40,29 +36,29 @@ public class ShowPlayerCommand implements SubCommand {
 
             if (player != null) {
                 // オンラインプレーヤー
-                if(hideMeManager.isHidden(player)) {
+                if (hideMeManager.isHidden(player)) {
                     hideMeManager.showPlayer(player);
                     player.sendMessage("You are now visible.");
-                    sender.sendMessage("Player "+playerName+" is now visible.");
+                    sender.sendMessage("Player " + playerName + " is now visible.");
                 } else {
-                    sender.sendMessage("Player "+playerName+" is already visible.");
+                    sender.sendMessage("Player " + playerName + " is already visible.");
                 }
             } else {
                 // オフラインプレーヤー
-                for (OfflinePlayer offlinePlayer: plugin.getServer().getOfflinePlayers()) {
+                for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
                     if (offlinePlayer.getName().equals(playerName)) {
                         if (hideMeManager.isHidden(offlinePlayer)) {
                             hideMeManager.showPlayer(offlinePlayer);
-                            sender.sendMessage("Player "+playerName+" is now visible.");
+                            sender.sendMessage("Player " + playerName + " is now visible.");
                         } else {
-                            sender.sendMessage("Player "+playerName+" is already visible.");
+                            sender.sendMessage("Player " + playerName + " is already visible.");
                         }
                         return;
                     }
                 }
 
                 // not found
-                sender.sendMessage("Player "+playerName+" not found.");
+                sender.sendMessage("Player " + playerName + " not found.");
             }
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
