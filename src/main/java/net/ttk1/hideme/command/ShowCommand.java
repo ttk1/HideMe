@@ -1,37 +1,24 @@
 package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class ShowCommand implements HideMeCommand {
-    private final String SUB_COMMAND = "show";
-    private final String PERMISSION = "hideme.show";
-
-    private final HideMe plugin;
-    private final HideMeManager hideMeManager;
-
-    public ShowCommand(HideMe plugin, HideMeManager hideMeManager) {
-        this.plugin = plugin;
-        this.hideMeManager = hideMeManager;
-    }
-
-    @Override
-    public boolean match(String[] args) {
-        return args.length == 1 && args[0].equals(SUB_COMMAND);
+public class ShowCommand extends AbstractCommand {
+    public ShowCommand(HideMe plugin) {
+        super(plugin, "show", "hideme.show", 0);
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (sender.hasPermission(PERMISSION)) {
+        if (checkPermission(sender)) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (hideMeManager.isHidden(player)) {
-                    hideMeManager.showPlayer(player);
+                if (manager.isHidden(player)) {
+                    manager.showPlayer(player);
                     player.sendMessage("You are now visible.");
                 } else {
                     player.sendMessage("You are already visible.");
@@ -47,11 +34,11 @@ public class ShowCommand implements HideMeCommand {
     @Override
     public Set<String> tabComplete(CommandSender sender, String[] args) {
         HashSet<String> candidates = new HashSet<>();
-        if (sender instanceof Player && sender.hasPermission(PERMISSION)) {
+        if (sender instanceof Player && checkPermission(sender)) {
             if (args.length == 0) {
-                candidates.add(SUB_COMMAND);
-            } else if (args.length == 1 && SUB_COMMAND.startsWith(args[0])) {
-                candidates.add(SUB_COMMAND);
+                candidates.add(commandName);
+            } else if (args.length == 1 && commandName.startsWith(args[0])) {
+                candidates.add(commandName);
             }
         }
         return candidates;
