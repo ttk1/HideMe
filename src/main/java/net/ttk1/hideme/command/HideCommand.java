@@ -1,21 +1,21 @@
-package net.ttk1.hideme.command.subcommand;
+package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.HideMeManager;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class StatusCommand implements SubCommand {
-    private final String SUB_COMMAND = "status";
-    private final String PERMISSION = "hideme.status";
+public class HideCommand implements HideMeCommand {
+    private final String SUB_COMMAND = "hide";
+    private final String PERMISSION = "hideme.hide";
 
     private final HideMe plugin;
     private final HideMeManager hideMeManager;
 
-    public StatusCommand(HideMe plugin, HideMeManager hideMeManager) {
+    public HideCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
         this.hideMeManager = hideMeManager;
     }
@@ -30,10 +30,11 @@ public class StatusCommand implements SubCommand {
         if (sender.hasPermission(PERMISSION)) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if (hideMeManager.isHidden(player)) {
+                if (!hideMeManager.isHidden(player)) {
+                    hideMeManager.hidePlayer(player);
                     player.sendMessage("You are now hidden.");
                 } else {
-                    player.sendMessage("You are now visible.");
+                    player.sendMessage("You are already hidden.");
                 }
             } else {
                 sender.sendMessage("This is player command!");

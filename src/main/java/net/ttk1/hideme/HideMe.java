@@ -1,49 +1,54 @@
 package net.ttk1.hideme;
 
 import com.comphenix.protocol.ProtocolLibrary;
-import net.ttk1.hideme.adapter.ServerPingPacketAdapter;
-import net.ttk1.hideme.api.HideMeManager;
-import net.ttk1.hideme.listener.SessionListener;
-import org.bukkit.command.CommandExecutor;
+import net.ttk1.hideme.command.HideMeCommandExecutor;
+import net.ttk1.hideme.command.HideMeCommandManager;
+import net.ttk1.hideme.command.HideMeTabCompleter;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Logger;
 
 /**
  * プレーヤーの可視性をコントロールするJavaPluginクラス
  */
 public class HideMe extends JavaPlugin {
-    private ServerPingPacketAdapter serverPingPacketAdapter;
-    private SessionListener sessionListener;
-    private HideMeManager hideMeManager;
-
-    private CommandExecutor commandExecutor;
-    private TabCompleter tabCompleter;
+    private Logger logger;
+    private HideMeManager manager;
 
     @Override
     public void onEnable() {
-        // event listener
-        getServer().getPluginManager().registerEvents(sessionListener, this);
-        ProtocolLibrary.getProtocolManager().addPacketListener(serverPingPacketAdapter);
+        // logger
+        logger = getLogger();
+        logger.info("Hello!");
 
-        // command
-        PluginCommand command = getCommand("hideme");
-        command.setExecutor(commandExecutor);
-        command.setTabCompleter(tabCompleter);
+        try {
+            // manager
+            manager = new HideMeManager(this);
 
-        getLogger().info("HideMe enabled");
+            // event listener
+            getServer().getPluginManager().registerEvents(new SessionListener(this), this);
+            ProtocolLibrary.getProtocolManager().addPacketListener(new ServerPingPacketAdapter(this));
+
+            // command
+            PluginCommand command = getCommand("hideme");
+            HideMeCommandManager commandManager = new HideMeCommandManager(this);
+            command.setExecutor(new HideMeCommandExecutor(commandManager));
+            command.setTabCompleter(new HideMeTabCompleter(commandManager));
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.severe("初期化に失敗しました。");
+        }
+        logger.info("初期化が完了しました。");
     }
 
     @Override
     public void onDisable() {
-        hideMeManager.save();
-        getLogger().info("HideMe disabled");
+        manager.save();
+        logger.info("Bye!");
     }
 
-    /**
-     * @return HiddenPlayerManager
-     */
     public HideMeManager getManager() {
-        return hideMeManager;
+        return manager;
     }
 }

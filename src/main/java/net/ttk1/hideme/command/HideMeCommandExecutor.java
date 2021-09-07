@@ -1,7 +1,5 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.command.subcommand.SubCommand;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
@@ -9,21 +7,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HideMeCommandExecutor implements CommandExecutor {
-    private SubCommandManager subCommandManager;
+    private final HideMeCommandManager commandManager;
 
-    private void setSubCommandManager(SubCommandManager subCommandManager) {
-        this.subCommandManager = subCommandManager;
+    public HideMeCommandExecutor(HideMeCommandManager commandManager) {
+        this.commandManager = commandManager;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        List<SubCommand> subCommands = subCommandManager.getSubCommands();
-        List<SubCommand> matchedCommands = subCommands.stream().filter(i -> i.match(args)).collect(Collectors.toList());
+    public boolean onCommand(CommandSender sender, org.bukkit.command.Command bukkitCommand, String label, String[] args) {
+        List<HideMeCommand> commands = commandManager.getCommands();
+        List<HideMeCommand> matchedCommands = commands.stream().filter(i -> i.match(args)).collect(Collectors.toList());
         if (matchedCommands.size() == 1) {
-            SubCommand matchedCommand = matchedCommands.get(0);
+            HideMeCommand matchedCommand = matchedCommands.get(0);
             matchedCommand.execute(sender, args);
         } else {
-            // コマンドがマッチしなかったときの処理
             sender.sendMessage("Command not found!");
         }
         return true;

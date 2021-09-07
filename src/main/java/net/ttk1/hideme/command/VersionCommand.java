@@ -1,21 +1,20 @@
-package net.ttk1.hideme.command.subcommand;
+package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.HideMeManager;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class HideCommand implements SubCommand {
-    private final String SUB_COMMAND = "hide";
-    private final String PERMISSION = "hideme.hide";
+public class VersionCommand implements HideMeCommand {
+    private final String SUB_COMMAND = "version";
+    private final String PERMISSION = "hideme.version";
 
     private final HideMe plugin;
     private final HideMeManager hideMeManager;
 
-    public HideCommand(HideMe plugin, HideMeManager hideMeManager) {
+    public VersionCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
         this.hideMeManager = hideMeManager;
     }
@@ -28,17 +27,7 @@ public class HideCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                if (!hideMeManager.isHidden(player)) {
-                    hideMeManager.hidePlayer(player);
-                    player.sendMessage("You are now hidden.");
-                } else {
-                    player.sendMessage("You are already hidden.");
-                }
-            } else {
-                sender.sendMessage("This is player command!");
-            }
+            sender.sendMessage(plugin.getDescription().getVersion());
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
         }
@@ -47,7 +36,7 @@ public class HideCommand implements SubCommand {
     @Override
     public Set<String> tabComplete(CommandSender sender, String[] args) {
         HashSet<String> candidates = new HashSet<>();
-        if (sender instanceof Player && sender.hasPermission(PERMISSION)) {
+        if (sender.hasPermission(PERMISSION)) {
             if (args.length == 0) {
                 candidates.add(SUB_COMMAND);
             } else if (args.length == 1 && SUB_COMMAND.startsWith(args[0])) {

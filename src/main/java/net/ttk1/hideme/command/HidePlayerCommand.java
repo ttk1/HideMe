@@ -1,7 +1,7 @@
-package net.ttk1.hideme.command.subcommand;
+package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.HideMeManager;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -10,14 +10,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ShowPlayerCommand implements SubCommand {
-    private final String SUB_COMMAND = "show";
-    private final String PERMISSION = "hideme.show.player";
+public class HidePlayerCommand implements HideMeCommand {
+    private final String SUB_COMMAND = "hide";
+    private final String PERMISSION = "hideme.hide.player";
 
     private final HideMe plugin;
     private final HideMeManager hideMeManager;
 
-    public ShowPlayerCommand(HideMe plugin, HideMeManager hideMeManager) {
+    public HidePlayerCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
         this.hideMeManager = hideMeManager;
     }
@@ -36,22 +36,22 @@ public class ShowPlayerCommand implements SubCommand {
 
             if (player != null) {
                 // オンラインプレーヤー
-                if (hideMeManager.isHidden(player)) {
-                    hideMeManager.showPlayer(player);
-                    player.sendMessage("You are now visible.");
-                    sender.sendMessage("Player " + playerName + " is now visible.");
+                if (!hideMeManager.isHidden(player)) {
+                    hideMeManager.hidePlayer(player);
+                    player.sendMessage("You are now hidden.");
+                    sender.sendMessage("Player " + playerName + " is now hidden.");
                 } else {
-                    sender.sendMessage("Player " + playerName + " is already visible.");
+                    sender.sendMessage("Player " + playerName + " is already hidden.");
                 }
             } else {
                 // オフラインプレーヤー
                 for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
                     if (offlinePlayer.getName().equals(playerName)) {
-                        if (hideMeManager.isHidden(offlinePlayer)) {
-                            hideMeManager.showPlayer(offlinePlayer);
-                            sender.sendMessage("Player " + playerName + " is now visible.");
+                        if (!hideMeManager.isHidden(offlinePlayer)) {
+                            hideMeManager.hidePlayer(offlinePlayer);
+                            sender.sendMessage("Player " + playerName + " is now hidden.");
                         } else {
-                            sender.sendMessage("Player " + playerName + " is already visible.");
+                            sender.sendMessage("Player " + playerName + " is already hidden.");
                         }
                         return;
                     }

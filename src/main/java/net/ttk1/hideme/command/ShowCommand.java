@@ -1,23 +1,21 @@
-package net.ttk1.hideme.command.subcommand;
+package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.api.HideMeManager;
-import org.bukkit.OfflinePlayer;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-public class ListCommand implements SubCommand {
-    private final String SUB_COMMAND = "list";
-    private final String PERMISSION = "hideme.list";
+public class ShowCommand implements HideMeCommand {
+    private final String SUB_COMMAND = "show";
+    private final String PERMISSION = "hideme.show";
 
     private final HideMe plugin;
     private final HideMeManager hideMeManager;
 
-    public ListCommand(HideMe plugin, HideMeManager hideMeManager) {
+    public ShowCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
         this.hideMeManager = hideMeManager;
     }
@@ -30,8 +28,17 @@ public class ListCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
-            sender.sendMessage("Online:" + hideMeManager.getHiddenPlayers().stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getName).collect(Collectors.toList()));
-            sender.sendMessage("Offline:" + hideMeManager.getHiddenPlayers().stream().filter(((Predicate<OfflinePlayer>) OfflinePlayer::isOnline).negate()).map(OfflinePlayer::getName).collect(Collectors.toList()));
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                if (hideMeManager.isHidden(player)) {
+                    hideMeManager.showPlayer(player);
+                    player.sendMessage("You are now visible.");
+                } else {
+                    player.sendMessage("You are already visible.");
+                }
+            } else {
+                sender.sendMessage("This is player command!");
+            }
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
         }
@@ -40,7 +47,7 @@ public class ListCommand implements SubCommand {
     @Override
     public Set<String> tabComplete(CommandSender sender, String[] args) {
         HashSet<String> candidates = new HashSet<>();
-        if (sender.hasPermission(PERMISSION)) {
+        if (sender instanceof Player && sender.hasPermission(PERMISSION)) {
             if (args.length == 0) {
                 candidates.add(SUB_COMMAND);
             } else if (args.length == 1 && SUB_COMMAND.startsWith(args[0])) {

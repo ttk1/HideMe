@@ -12,7 +12,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <!--SpigotPlugin properties-->
-        <plugin.main>net.ttk1.tamachat.HideMe</plugin.main>
+        <plugin.main>net.ttk1.hideme.HideMe</plugin.main>
         <plugin.name>${project.artifactId}</plugin.name>
         <plugin.description>HideMe Plugin</plugin.description>
         <plugin.website>https://ttk1.net</plugin.website>

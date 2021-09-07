@@ -12,15 +12,16 @@ depend:
 commands:
   hideme:
     description: hideme command.
-    usage: /hideme <subcommand>
+    permission: hideme.command
+    usage: /hideme <command>
     aliases: hm
 
 permissions:
+  hideme.command:
+    default: true
   hideme.version:
     default: op
   hideme.list:
-    default: op
-  hideme.help:
     default: op
   hideme.status:
     default: op
