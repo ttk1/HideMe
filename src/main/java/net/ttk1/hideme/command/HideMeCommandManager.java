@@ -19,7 +19,7 @@ public class HideMeCommandManager {
         commands.add(new StatusCommand(plugin, manager));
         commands.add(new HidePlayerCommand(plugin, manager));
         commands.add(new ShowPlayerCommand(plugin, manager));
-        commands.add(new ReloadCommand(plugin, manager));
+        commands.add(new ReapplyCommand(plugin, manager));
     }
 
     public List<HideMeCommand> getCommands() {

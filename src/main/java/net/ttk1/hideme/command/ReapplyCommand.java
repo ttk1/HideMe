@@ -8,14 +8,14 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ReloadCommand implements HideMeCommand {
-    private final String SUB_COMMAND = "reload";
-    private final String PERMISSION = "hideme.reload";
+public class ReapplyCommand implements HideMeCommand {
+    private final String SUB_COMMAND = "reapply";
+    private final String PERMISSION = "hideme.reapply";
 
     private final HideMe plugin;
     private final HideMeManager hideMeManager;
 
-    public ReloadCommand(HideMe plugin, HideMeManager hideMeManager) {
+    public ReapplyCommand(HideMe plugin, HideMeManager hideMeManager) {
         this.plugin = plugin;
         this.hideMeManager = hideMeManager;
     }
@@ -29,9 +29,9 @@ public class ReloadCommand implements HideMeCommand {
     public void execute(CommandSender sender, String[] args) {
         if (sender.hasPermission(PERMISSION)) {
             for (Player player : plugin.getServer().getOnlinePlayers()) {
-                hideMeManager.refresh(player);
+                hideMeManager.apply(player);
             }
-            sender.sendMessage("Reloaded!");
+            sender.sendMessage("Reapplied!");
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
         }

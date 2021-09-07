@@ -48,7 +48,7 @@ public class HideMeManager {
      */
     public void save() {
         FileConfiguration config = new YamlConfiguration();
-        config.set("hidden_player_uuids", new ArrayList<String>(hiddenPlayerUUIDs));
+        config.set("hidden_player_uuids", new ArrayList<>(hiddenPlayerUUIDs));
         try {
             config.save(dataFile);
         } catch (IOException e) {
@@ -137,7 +137,7 @@ public class HideMeManager {
      *
      * @param player 対象のプレーヤー
      */
-    public void refresh(Player player) {
+    public void apply(Player player) {
         if (player != null) {
             for (Player p : plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p)) {

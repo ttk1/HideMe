@@ -24,7 +24,7 @@ public class SessionListener implements Listener {
             event.setJoinMessage(null);
             manager.hidePlayer(player);
         }
-        manager.refresh(player);
+        manager.apply(player);
     }
 
     @EventHandler
