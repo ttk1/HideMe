@@ -1,5 +1,2 @@
-/target/
-.idea/*
-*.iml
-*.MF
-doc/*
+.idea/
+target/

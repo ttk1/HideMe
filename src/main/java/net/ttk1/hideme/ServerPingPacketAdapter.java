@@ -1,15 +1,12 @@
-package net.ttk1.adapter;
+package net.ttk1.hideme;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedServerPing;
-
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-
-import net.ttk1.HideMe;
-import net.ttk1.PlayerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +15,13 @@ import java.util.List;
  * ServerListPingを書き換えて、プレーヤー数を偽装する
  */
 public class ServerPingPacketAdapter extends PacketAdapter {
-    private HideMe plg;
-    private PlayerManager manager;
+    private final HideMe plugin;
+    private final HideMeManager manager;
 
-    public ServerPingPacketAdapter(HideMe plg) {
-        super(plg, PacketType.Status.Server.SERVER_INFO);
-        this.plg = plg;
-        this.manager = plg.getManager();
+    public ServerPingPacketAdapter(HideMe plugin) {
+        super(plugin, PacketType.Status.Server.SERVER_INFO);
+        this.plugin = plugin;
+        this.manager = plugin.getManager();
     }
 
     @Override
@@ -32,18 +29,17 @@ public class ServerPingPacketAdapter extends PacketAdapter {
         StructureModifier<WrappedServerPing> pings = event.getPacket().getServerPings();
         WrappedServerPing ping = pings.read(0);
 
-        // pingパケットの送信元をログに出力
-        plg.getHideMeLogger().info(event.getPlayer().getAddress().toString());
-
-        if (ping.getPlayersOnline() < manager.getOnlineHiddenCount()) {
-            plg.getLogger().warning("プレーヤー数が異常です");
+        int fakedPlayersOnline = ping.getPlayersOnline() - (int) manager.getHiddenPlayers().stream().filter(OfflinePlayer::isOnline).count();
+        if (fakedPlayersOnline < 0) {
+            plugin.getLogger().warning("プレーヤー数が異常です");
+            ping.setPlayersOnline(0);
         } else {
-            ping.setPlayersOnline(ping.getPlayersOnline() - manager.getOnlineHiddenCount());
+            ping.setPlayersOnline(fakedPlayersOnline);
         }
 
         List<Player> players = new ArrayList<>();
-        for (Player player: plg.getServer().getOnlinePlayers()){
-            if (!manager.isHidden(player)){
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (!manager.isHidden(player)) {
                 players.add(player);
             }
         }

@@ -1,9 +1,39 @@
-name: ${name}
 version: ${version}
-main: net.ttk1.HideMe
-depend: [ProtocolLib]
+name: ${plugin.name}
+main: ${plugin.main}
+description: ${plugin.description}
+author: ${plguin.author}
+website: ${plugin.website}
+database: ${plugin.database}
+
+depend:
+  - ProtocolLib
 
 commands:
   hideme:
     description: hideme command.
-    usage: '/hideme'
+    permission: hideme.command
+    usage: /hideme <command>
+    aliases: hm
+
+permissions:
+  hideme.command:
+    default: true
+  hideme.version:
+    default: op
+  hideme.list:
+    default: op
+  hideme.status:
+    default: op
+  hideme.hide:
+    default: op
+  hideme.hide.player:
+    default: op
+  hideme.show:
+    default: op
+  hideme.show.player:
+    default: op
+  hideme.reapply:
+    default: op
+  hideme.bypass:
+    default: op
