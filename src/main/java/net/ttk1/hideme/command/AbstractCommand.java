@@ -28,7 +28,7 @@ public abstract class AbstractCommand implements HideMeCommand {
         return sender.hasPermission(permission);
     }
 
-    protected Server getServer() {
+    protected final Server getServer() {
         return plugin.getServer();
     }
 

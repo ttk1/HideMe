@@ -5,6 +5,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,11 +69,12 @@ public class HideMeManager {
     /**
      * 指定したプレーヤーを他のプレーヤーから見えないようにする
      *
-     * @param player 対象のプレーヤー
+     * @param offlinePlayer 対象のプレーヤー
      */
-    public void hidePlayer(Player player) {
+    public void hidePlayer(@NotNull OfflinePlayer offlinePlayer) {
+        addHiddenPlayer(offlinePlayer.getUniqueId().toString());
+        Player player = offlinePlayer.getPlayer();
         if (player != null) {
-            addHiddenPlayer(player.getUniqueId().toString());
             for (Player p : plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p)) {
                     if (p.hasPermission("hideme.bypass")) {
@@ -86,47 +88,18 @@ public class HideMeManager {
     }
 
     /**
-     * 指定したプレーヤーを他のプレーヤーから見えないようにする
+     * 指定したプレーヤーを他のプレーヤーから見えるようにする
      *
      * @param offlinePlayer 対象のプレーヤー
      */
-    public void hidePlayer(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer != null) {
-            if (offlinePlayer.isOnline()) {
-                hidePlayer(offlinePlayer.getPlayer());
-            } else {
-                addHiddenPlayer(offlinePlayer.getUniqueId().toString());
-            }
-        }
-    }
-
-    /**
-     * 指定したプレーヤーを他のプレーヤーから見えるようにする
-     *
-     * @param player 対象のプレーヤー
-     */
-    public void showPlayer(Player player) {
+    public void showPlayer(@NotNull OfflinePlayer offlinePlayer) {
+        removeHiddenPlayer(offlinePlayer.getUniqueId().toString());
+        Player player = offlinePlayer.getPlayer();
         if (player != null) {
-            removeHiddenPlayer(player.getUniqueId().toString());
             for (Player p : plugin.getServer().getOnlinePlayers()) {
                 if (!player.equals(p)) {
                     p.showPlayer(plugin, player);
                 }
-            }
-        }
-    }
-
-    /**
-     * 指定したプレーヤーを他のプレーヤーから見えるようにする
-     *
-     * @param offlinePlayer 対象のプレーヤー
-     */
-    public void showPlayer(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer != null) {
-            if (offlinePlayer.isOnline()) {
-                showPlayer(offlinePlayer.getPlayer());
-            } else {
-                removeHiddenPlayer(offlinePlayer.getUniqueId().toString());
             }
         }
     }
@@ -137,15 +110,13 @@ public class HideMeManager {
      *
      * @param player 対象のプレーヤー
      */
-    public void apply(Player player) {
-        if (player != null) {
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
-                if (!player.equals(p)) {
-                    if (isHidden(p) && !player.hasPermission("hideme.bypass")) {
-                        player.hidePlayer(plugin, p);
-                    } else {
-                        player.showPlayer(plugin, p);
-                    }
+    public void apply(@NotNull Player player) {
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            if (!player.equals(p)) {
+                if (isHidden(p) && !player.hasPermission("hideme.bypass")) {
+                    player.hidePlayer(plugin, p);
+                } else {
+                    player.showPlayer(plugin, p);
                 }
             }
         }
@@ -157,18 +128,8 @@ public class HideMeManager {
      * @param player 対象のプレーヤー
      * @return 指定したプレーヤーが見えない状態どうか（true = 見えない）
      */
-    public boolean isHidden(Player player) {
+    public boolean isHidden(@NotNull OfflinePlayer player) {
         return hiddenPlayerUUIDs.contains(player.getUniqueId().toString());
-    }
-
-    /**
-     * 指定したプレーヤーが他のプレーヤーから見えない状態かどうかを返す
-     *
-     * @param offlinePlayer 対象のプレーヤー
-     * @return 指定したプレーヤーが見えない状態どうか（true = 見えない）
-     */
-    public boolean isHidden(OfflinePlayer offlinePlayer) {
-        return hiddenPlayerUUIDs.contains(offlinePlayer.getUniqueId().toString());
     }
 
     /**
