@@ -7,13 +7,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class VersionCommand extends AbstractCommand {
+    private final String pluginDescription;
+
     public VersionCommand(HideMe plugin) {
         super(plugin, "version", "hideme.version", 0);
+        this.pluginDescription = plugin.getDescription().getVersion();
     }
 
     @Override
     public void executeImpl(CommandSender sender, String[] args) {
-        sender.sendMessage(plugin.getDescription().getVersion());
+        sender.sendMessage(pluginDescription);
     }
 
     @Override

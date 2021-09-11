@@ -17,7 +17,7 @@ public class ShowPlayerCommand extends AbstractCommand {
     @Override
     public void executeImpl(CommandSender sender, String[] args) {
         String playerName = args[1];
-        Player player = plugin.getServer().getPlayer(playerName);
+        Player player = getServer().getPlayer(playerName);
         if (player != null) {
             // オンラインプレーヤー
             if (manager.isHidden(player)) {
@@ -29,7 +29,7 @@ public class ShowPlayerCommand extends AbstractCommand {
             }
         } else {
             // オフラインプレーヤー
-            for (OfflinePlayer offlinePlayer : plugin.getServer().getOfflinePlayers()) {
+            for (OfflinePlayer offlinePlayer : getServer().getOfflinePlayers()) {
                 if (offlinePlayer.getName().equals(playerName)) {
                     if (manager.isHidden(offlinePlayer)) {
                         manager.showPlayer(offlinePlayer);
@@ -53,14 +53,14 @@ public class ShowPlayerCommand extends AbstractCommand {
         } else if (args.length == 1 && commandName.startsWith(args[0])) {
             if (args[0].equals(commandName)) {
                 // すべてのオンラインプレーヤーを候補とする
-                candidates.addAll(plugin.getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet()));
+                candidates.addAll(getServer().getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet()));
             } else {
                 // コマンドを候補とする
                 candidates.add(commandName);
             }
         } else if (args.length == 2) {
             // プレフィックスが一致するオンラインプレーヤーを候補とする
-            candidates.addAll(plugin.getServer().getOnlinePlayers().stream().map(Player::getName).filter(i -> i.startsWith(args[1])).collect(Collectors.toSet()));
+            candidates.addAll(getServer().getOnlinePlayers().stream().map(Player::getName).filter(i -> i.startsWith(args[1])).collect(Collectors.toSet()));
         }
         return candidates;
     }

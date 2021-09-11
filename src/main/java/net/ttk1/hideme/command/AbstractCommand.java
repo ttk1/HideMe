@@ -3,13 +3,14 @@ package net.ttk1.hideme.command;
 import com.google.common.annotations.VisibleForTesting;
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class AbstractCommand implements HideMeCommand {
-    protected final HideMe plugin;
+    private final HideMe plugin;
     protected final HideMeManager manager;
     protected final String commandName;
     protected final String permission;
@@ -26,6 +27,10 @@ public abstract class AbstractCommand implements HideMeCommand {
     @VisibleForTesting
     final boolean checkPermission(CommandSender sender) {
         return sender.hasPermission(permission);
+    }
+
+    protected Server getServer() {
+        return plugin.getServer();
     }
 
     @Override

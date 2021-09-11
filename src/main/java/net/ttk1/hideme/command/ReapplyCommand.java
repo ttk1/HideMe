@@ -14,7 +14,7 @@ public class ReapplyCommand extends AbstractCommand {
 
     @Override
     public void executeImpl(CommandSender sender, String[] args) {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+        for (Player player : getServer().getOnlinePlayers()) {
             manager.apply(player);
         }
         sender.sendMessage("Reapplied!");
