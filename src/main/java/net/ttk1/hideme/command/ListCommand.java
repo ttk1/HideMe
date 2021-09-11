@@ -15,24 +15,18 @@ public class ListCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        if (checkPermission(sender)) {
-            sender.sendMessage("Online:" + manager.getHiddenPlayers().stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getName).collect(Collectors.toList()));
-            sender.sendMessage("Offline:" + manager.getHiddenPlayers().stream().filter(((Predicate<OfflinePlayer>) OfflinePlayer::isOnline).negate()).map(OfflinePlayer::getName).collect(Collectors.toList()));
-        } else {
-            sender.sendMessage("You don't hove permission to perform this command!");
-        }
+    public void executeImpl(CommandSender sender, String[] args) {
+        sender.sendMessage("Online:" + manager.getHiddenPlayers().stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getName).collect(Collectors.toList()));
+        sender.sendMessage("Offline:" + manager.getHiddenPlayers().stream().filter(((Predicate<OfflinePlayer>) OfflinePlayer::isOnline).negate()).map(OfflinePlayer::getName).collect(Collectors.toList()));
     }
 
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabCompleteImpl(CommandSender sender, String[] args) {
         HashSet<String> candidates = new HashSet<>();
-        if (checkPermission(sender)) {
-            if (args.length == 0) {
-                candidates.add(commandName);
-            } else if (args.length == 1 && commandName.startsWith(args[0])) {
-                candidates.add(commandName);
-            }
+        if (args.length == 0) {
+            candidates.add(commandName);
+        } else if (args.length == 1 && commandName.startsWith(args[0])) {
+            candidates.add(commandName);
         }
         return candidates;
     }

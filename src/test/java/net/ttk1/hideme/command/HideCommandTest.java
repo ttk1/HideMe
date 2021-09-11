@@ -6,7 +6,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -24,7 +23,7 @@ public class HideCommandTest {
     }
 
     @Test
-    public void executeTest() {
+    public void executeImplTest() {
         HideMe plugin = mock(HideMe.class);
         HideMeManager manager = mock(HideMeManager.class);
         when(plugin.getManager()).thenReturn(manager);
@@ -63,14 +62,11 @@ public class HideCommandTest {
     }
 
     @Test
-    public void tabCompleteTest() {
+    public void tabCompleteImplTest() {
         HideMe plugin = mock(HideMe.class);
         HideCommand command = new HideCommand(plugin);
-
-        // 権限なし（マッチしない）
         Player player = mock(Player.class);
-        when(player.hasPermission("hideme.hide")).thenReturn(false);
-        assertThat(command.tabComplete(player, new String[]{"h"}), is(new HashSet<>()));
+        ConsoleCommandSender console = mock(ConsoleCommandSender.class);
 
         // コマンド違い（マッチしない）
         when(player.hasPermission("hideme.hide")).thenReturn(true);
@@ -84,7 +80,6 @@ public class HideCommandTest {
         assertThat(command.tabComplete(player, new String[]{"h"}), is(new HashSet<>(Collections.singletonList("hide"))));
 
         // console（マッチしない）
-        ConsoleCommandSender console = mock(ConsoleCommandSender.class);
         assertThat(command.tabComplete(console, new String[]{}), is(new HashSet<>()));
         assertThat(command.tabComplete(console, new String[]{"h"}), is(new HashSet<>()));
     }

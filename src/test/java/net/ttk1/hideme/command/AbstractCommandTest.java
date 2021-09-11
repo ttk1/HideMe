@@ -20,11 +20,11 @@ public class AbstractCommandTest {
         }
 
         @Override
-        public void execute(CommandSender sender, String[] args) {
+        public void executeImpl(CommandSender sender, String[] args) {
         }
 
         @Override
-        public Set<String> tabComplete(CommandSender sender, String[] args) {
+        public Set<String> tabCompleteImpl(CommandSender sender, String[] args) {
             return null;
         }
     }

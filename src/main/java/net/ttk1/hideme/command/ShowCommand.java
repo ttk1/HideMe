@@ -13,28 +13,24 @@ public class ShowCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
-        if (checkPermission(sender)) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                if (manager.isHidden(player)) {
-                    manager.showPlayer(player);
-                    player.sendMessage("You are now visible.");
-                } else {
-                    player.sendMessage("You are already visible.");
-                }
+    public void executeImpl(CommandSender sender, String[] args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            if (manager.isHidden(player)) {
+                manager.showPlayer(player);
+                player.sendMessage("You are now visible.");
             } else {
-                sender.sendMessage("This is player command!");
+                player.sendMessage("You are already visible.");
             }
         } else {
-            sender.sendMessage("You don't hove permission to perform this command!");
+            sender.sendMessage("This is player command!");
         }
     }
 
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabCompleteImpl(CommandSender sender, String[] args) {
         HashSet<String> candidates = new HashSet<>();
-        if (sender instanceof Player && checkPermission(sender)) {
+        if (sender instanceof Player) {
             if (args.length == 0) {
                 candidates.add(commandName);
             } else if (args.length == 1 && commandName.startsWith(args[0])) {
