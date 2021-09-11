@@ -24,9 +24,9 @@ public interface HideMeCommand {
     /**
      * コマンドのタブ補完をする
      *
-     * @param sender タブ補完実行者
-     * @param args   コマンド引数
-     * @return 補完候補のセット
+     * @param sender     タブ補完実行者
+     * @param args       コマンド引数
+     * @param candidates タブ補完候補をこれに詰める
      */
-    Set<String> tabComplete(CommandSender sender, String[] args);
+    void tabComplete(CommandSender sender, String[] args, Set<String> candidates);
 }

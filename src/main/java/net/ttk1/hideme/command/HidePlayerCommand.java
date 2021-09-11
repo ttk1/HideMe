@@ -5,7 +5,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,7 +14,7 @@ public class HidePlayerCommand extends AbstractCommand {
     }
 
     @Override
-    public void executeImpl(CommandSender sender, String[] args) {
+    protected void executeImpl(CommandSender sender, String[] args) {
         String playerName = args[1];
         Player player = getServer().getPlayer(playerName);
         if (player != null) {
@@ -46,8 +45,7 @@ public class HidePlayerCommand extends AbstractCommand {
     }
 
     @Override
-    public Set<String> tabCompleteImpl(CommandSender sender, String[] args) {
-        HashSet<String> candidates = new HashSet<>();
+    protected void tabCompleteImpl(CommandSender sender, String[] args, Set<String> candidates) {
         if (args.length == 0) {
             candidates.add(commandName);
         } else if (args.length == 1 && commandName.startsWith(args[0])) {
@@ -62,6 +60,5 @@ public class HidePlayerCommand extends AbstractCommand {
             // プレフィックスが一致するオンラインプレーヤーを候補とする
             candidates.addAll(getServer().getOnlinePlayers().stream().map(Player::getName).filter(i -> i.startsWith(args[1])).collect(Collectors.toSet()));
         }
-        return candidates;
     }
 }

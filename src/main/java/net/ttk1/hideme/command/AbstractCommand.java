@@ -6,7 +6,6 @@ import net.ttk1.hideme.HideMeManager;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public abstract class AbstractCommand implements HideMeCommand {
@@ -53,23 +52,21 @@ public abstract class AbstractCommand implements HideMeCommand {
      * @param sender コマンド実行者
      * @param args   コマンド引数
      */
-    abstract protected void executeImpl(CommandSender sender, String[] args);
+    protected abstract void executeImpl(CommandSender sender, String[] args);
 
     @Override
-    public final Set<String> tabComplete(CommandSender sender, String[] args) {
+    public final void tabComplete(CommandSender sender, String[] args, Set<String> candidates) {
         if (checkPermission(sender)) {
-            return tabCompleteImpl(sender, args);
-        } else {
-            return new HashSet<>();
+            tabCompleteImpl(sender, args, candidates);
         }
     }
 
     /**
      * タブ補完の実装をここに記述する
      *
-     * @param sender タブ補完実行者
-     * @param args   コマンド引数
-     * @return 補完候補のセット
+     * @param sender     タブ補完実行者
+     * @param args       コマンド引数
+     * @param candidates タブ補完候補をこれに詰める
      */
-    abstract protected Set<String> tabCompleteImpl(CommandSender sender, String[] args);
+    protected abstract void tabCompleteImpl(CommandSender sender, String[] args, Set<String> candidates);
 }

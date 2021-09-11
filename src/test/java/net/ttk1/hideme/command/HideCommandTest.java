@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -67,20 +68,32 @@ public class HideCommandTest {
         HideCommand command = new HideCommand(plugin);
         Player player = mock(Player.class);
         ConsoleCommandSender console = mock(ConsoleCommandSender.class);
+        Set<String> candidates = new HashSet<>();
 
         // コマンド違い（マッチしない）
         when(player.hasPermission("hideme.hide")).thenReturn(true);
-        assertThat(command.tabComplete(player, new String[]{"x"}), is(new HashSet<>()));
+        command.tabComplete(player, new String[]{"x"}, candidates);
+        assertThat(candidates, is(new HashSet<>()));
 
         // 引数多い（マッチしない）
-        assertThat(command.tabComplete(player, new String[]{"hide", "x"}), is(new HashSet<>()));
+        candidates.clear();
+        command.tabComplete(player, new String[]{"hide", "x"}, candidates);
+        assertThat(candidates, is(new HashSet<>()));
 
         // マッチ
-        assertThat(command.tabComplete(player, new String[]{}), is(new HashSet<>(Collections.singletonList("hide"))));
-        assertThat(command.tabComplete(player, new String[]{"h"}), is(new HashSet<>(Collections.singletonList("hide"))));
+        candidates.clear();
+        command.tabComplete(player, new String[]{}, candidates);
+        assertThat(candidates, is(new HashSet<>(Collections.singletonList("hide"))));
+        candidates.clear();
+        command.tabComplete(player, new String[]{"h"}, candidates);
+        assertThat(candidates, is(new HashSet<>(Collections.singletonList("hide"))));
 
         // console（マッチしない）
-        assertThat(command.tabComplete(console, new String[]{}), is(new HashSet<>()));
-        assertThat(command.tabComplete(console, new String[]{"h"}), is(new HashSet<>()));
+        candidates.clear();
+        command.tabComplete(console, new String[]{}, candidates);
+        assertThat(candidates, is(new HashSet<>()));
+        candidates.clear();
+        command.tabComplete(console, new String[]{"h"}, candidates);
+        assertThat(candidates, is(new HashSet<>()));
     }
 }
