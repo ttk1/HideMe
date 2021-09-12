@@ -9,14 +9,12 @@ import org.bukkit.command.CommandSender;
 import java.util.Set;
 
 public abstract class AbstractCommand implements HideMeCommand {
-    private final HideMe plugin;
     protected final HideMeManager manager;
     protected final String commandName;
     protected final String permission;
     private final int argc;
 
     public AbstractCommand(HideMe plugin, String commandName, String permission, int argc) {
-        this.plugin = plugin;
         this.manager = plugin.getManager();
         this.commandName = commandName;
         this.permission = permission;
@@ -26,10 +24,6 @@ public abstract class AbstractCommand implements HideMeCommand {
     @VisibleForTesting
     final boolean checkPermission(CommandSender sender) {
         return sender.hasPermission(permission);
-    }
-
-    protected final Server getServer() {
-        return plugin.getServer();
     }
 
     @Override

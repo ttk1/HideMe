@@ -13,7 +13,7 @@ public class ReapplyCommand extends AbstractCommand {
 
     @Override
     protected void executeImpl(CommandSender sender, String[] args) {
-        for (Player player : getServer().getOnlinePlayers()) {
+        for (Player player : manager.getOnlinePlayers()) {
             manager.apply(player);
         }
         sender.sendMessage("Reapplied!");

@@ -1,6 +1,7 @@
 package net.ttk1.hideme;
 
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,10 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -22,12 +20,14 @@ import java.util.stream.Collectors;
 
 public class HideMeManager {
     private final HideMe plugin;
+    private final Server server;
     private final Logger logger;
     private final File dataFile;
     private Set<String> hiddenPlayerUUIDs;
 
     public HideMeManager(HideMe plugin) throws IOException, InvalidConfigurationException {
         this.plugin = plugin;
+        this.server = plugin.getServer();
         this.logger = plugin.getLogger();
         this.dataFile = new File(plugin.getDataFolder(), "hidden_players.yml");
         load();
@@ -58,6 +58,14 @@ public class HideMeManager {
         }
     }
 
+    public Collection<? extends Player> getOnlinePlayers() {
+        return server.getOnlinePlayers();
+    }
+
+    public OfflinePlayer[] getOfflinePlayers() {
+        return server.getOfflinePlayers();
+    }
+
     private void addHiddenPlayer(String playerUUID) {
         hiddenPlayerUUIDs.add(playerUUID);
     }
@@ -75,7 +83,7 @@ public class HideMeManager {
         addHiddenPlayer(offlinePlayer.getUniqueId().toString());
         Player player = offlinePlayer.getPlayer();
         if (player != null) {
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
+            for (Player p : getOnlinePlayers()) {
                 if (!player.equals(p)) {
                     if (p.hasPermission("hideme.bypass")) {
                         p.showPlayer(plugin, player);
@@ -96,7 +104,7 @@ public class HideMeManager {
         removeHiddenPlayer(offlinePlayer.getUniqueId().toString());
         Player player = offlinePlayer.getPlayer();
         if (player != null) {
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
+            for (Player p : getOnlinePlayers()) {
                 if (!player.equals(p)) {
                     p.showPlayer(plugin, player);
                 }
@@ -111,7 +119,7 @@ public class HideMeManager {
      * @param player 対象のプレーヤー
      */
     public void apply(@NotNull Player player) {
-        for (Player p : plugin.getServer().getOnlinePlayers()) {
+        for (Player p : getOnlinePlayers()) {
             if (!player.equals(p)) {
                 if (isHidden(p) && !player.hasPermission("hideme.bypass")) {
                     player.hidePlayer(plugin, p);
@@ -138,7 +146,7 @@ public class HideMeManager {
      * @param message バイパスするメッセージ
      */
     public void bypassMessage(String message) {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+        for (Player player : getOnlinePlayers()) {
             if (player.hasPermission("hideme.bypass")) {
                 player.sendMessage(message);
             }
@@ -151,6 +159,6 @@ public class HideMeManager {
      * @return 見えない状態のプレーヤーのリスト
      */
     public Set<OfflinePlayer> getHiddenPlayers() {
-        return Arrays.stream(plugin.getServer().getOfflinePlayers()).filter(this::isHidden).collect(Collectors.toSet());
+        return Arrays.stream(getOfflinePlayers()).filter(this::isHidden).collect(Collectors.toSet());
     }
 }
