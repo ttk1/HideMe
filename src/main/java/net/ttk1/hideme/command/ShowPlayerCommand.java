@@ -16,32 +16,19 @@ public class ShowPlayerCommand extends AbstractCommand {
     @Override
     protected void executeImpl(CommandSender sender, String[] args) {
         String playerName = args[1];
-        Player player = getServer().getPlayer(playerName);
-        if (player != null) {
-            // オンラインプレーヤー
-            if (manager.isHidden(player)) {
-                manager.showPlayer(player);
-                player.sendMessage("You are now visible.");
-                sender.sendMessage("Player " + playerName + " is now visible.");
-            } else {
-                sender.sendMessage("Player " + playerName + " is already visible.");
-            }
-        } else {
-            // オフラインプレーヤー
-            for (OfflinePlayer offlinePlayer : getServer().getOfflinePlayers()) {
-                if (playerName.equals(offlinePlayer.getName())) {
-                    if (manager.isHidden(offlinePlayer)) {
-                        manager.showPlayer(offlinePlayer);
-                        sender.sendMessage("Player " + playerName + " is now visible.");
-                    } else {
-                        sender.sendMessage("Player " + playerName + " is already visible.");
-                    }
-                    return;
+        for (OfflinePlayer offlinePlayer : getServer().getOfflinePlayers()) {
+            if (playerName.equals(offlinePlayer.getName())) {
+                if (manager.isHidden(offlinePlayer)) {
+                    manager.showPlayer(offlinePlayer);
+                    sender.sendMessage("Player " + playerName + " is now visible.");
+                } else {
+                    sender.sendMessage("Player " + playerName + " is already visible.");
                 }
+                return;
             }
-            // not found
-            sender.sendMessage("Player " + playerName + " not found.");
         }
+        // not found
+        sender.sendMessage("Player " + playerName + " not found.");
     }
 
     @Override
