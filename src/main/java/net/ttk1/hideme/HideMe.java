@@ -38,6 +38,7 @@ public class HideMe extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
             logger.severe("初期化に失敗しました。");
+            return;
         }
         logger.info("初期化が完了しました。");
     }
