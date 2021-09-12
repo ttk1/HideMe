@@ -29,7 +29,7 @@ public class ShowPlayerCommand extends AbstractCommand {
         } else {
             // オフラインプレーヤー
             for (OfflinePlayer offlinePlayer : getServer().getOfflinePlayers()) {
-                if (offlinePlayer.getName().equals(playerName)) {
+                if (playerName.equals(offlinePlayer.getName())) {
                     if (manager.isHidden(offlinePlayer)) {
                         manager.showPlayer(offlinePlayer);
                         sender.sendMessage("Player " + playerName + " is now visible.");
