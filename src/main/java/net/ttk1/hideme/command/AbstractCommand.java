@@ -3,7 +3,6 @@ package net.ttk1.hideme.command;
 import com.google.common.annotations.VisibleForTesting;
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
-import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 
 import java.util.Set;

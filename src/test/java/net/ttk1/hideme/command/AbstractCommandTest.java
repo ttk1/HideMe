@@ -1,7 +1,6 @@
 package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMe;
-import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.junit.Test;
 
@@ -10,8 +9,7 @@ import java.util.Set;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AbstractCommandTest {
     static class HideMeCommandImpl extends AbstractCommand {
@@ -25,13 +23,13 @@ public class AbstractCommandTest {
 
         @Override
         protected void tabCompleteImpl(CommandSender sender, String[] args, Set<String> candidates) {
+            candidates.add("test");
         }
     }
 
     @Test
     public void checkPermissionTest() {
         HideMe plugin = mock(HideMe.class);
-        when(plugin.getManager()).thenReturn(mock(HideMeManager.class));
         AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0);
         CommandSender sender = mock(CommandSender.class);
         // 権限なしの場合
@@ -45,7 +43,6 @@ public class AbstractCommandTest {
     @Test
     public void matchTest() {
         HideMe plugin = mock(HideMe.class);
-        when(plugin.getManager()).thenReturn(mock(HideMeManager.class));
 
         // 引数なしのコマンド
         AbstractCommand command1 = new HideMeCommandImpl(plugin, "command1", "permission", 0);
@@ -64,5 +61,41 @@ public class AbstractCommandTest {
         assertThat(command2.match(new String[]{"command2"}), is(false));
         // 引数多い
         assertThat(command2.match(new String[]{"command2", "arg1", "arg2"}), is(false));
+    }
+
+    @Test
+    public void executeTest() {
+        HideMe plugin = mock(HideMe.class);
+        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0);
+        CommandSender sender = mock(CommandSender.class);
+
+        // 権限あり
+        when(sender.hasPermission(anyString())).thenReturn(true);
+        command.execute(sender, null);
+        verify(sender, never()).sendMessage(anyString());
+
+        // 権限なし
+        when(sender.hasPermission(anyString())).thenReturn(false);
+        command.execute(sender, null);
+        verify(sender).sendMessage("You don't hove permission to perform this command!");
+    }
+
+    @Test
+    public void tabCompleteTest() {
+        HideMe plugin = mock(HideMe.class);
+        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0);
+        CommandSender sender = mock(CommandSender.class);
+        Set<String> candidates = mock(Set.class);
+
+        // 権限あり
+        when(sender.hasPermission(anyString())).thenReturn(true);
+        command.tabComplete(sender, null, candidates);
+        verify(candidates).add("test");
+
+        // 権限なし
+        reset(candidates);
+        when(sender.hasPermission(anyString())).thenReturn(false);
+        command.tabComplete(sender, null, candidates);
+        verify(candidates, never()).add(anyString());
     }
 }
