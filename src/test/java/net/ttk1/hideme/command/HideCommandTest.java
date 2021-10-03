@@ -64,11 +64,6 @@ public class HideCommandTest {
         command.tabCompleteImpl(player, new String[]{"x"}, candidates);
         assertThat(candidates, is(new HashSet<>()));
 
-        // 引数多い（マッチしない）
-        candidates.clear();
-        command.tabCompleteImpl(player, new String[]{"hide", "x"}, candidates);
-        assertThat(candidates, is(new HashSet<>()));
-
         // マッチ
         candidates.clear();
         command.tabCompleteImpl(player, new String[]{}, candidates);
