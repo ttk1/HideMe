@@ -4,6 +4,8 @@ import net.ttk1.hideme.HideMe;
 import org.bukkit.command.CommandSender;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -85,17 +87,17 @@ public class AbstractCommandTest {
         HideMe plugin = mock(HideMe.class);
         AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0);
         CommandSender sender = mock(CommandSender.class);
-        Set<String> candidates = mock(Set.class);
+        Set<String> candidates = new HashSet<>();
 
         // 権限あり
         when(sender.hasPermission(anyString())).thenReturn(true);
         command.tabComplete(sender, null, candidates);
-        verify(candidates).add("test");
+        assertThat(candidates, is(new HashSet<>(Collections.singletonList("test"))));
 
         // 権限なし
-        reset(candidates);
+        candidates.clear();
         when(sender.hasPermission(anyString())).thenReturn(false);
         command.tabComplete(sender, null, candidates);
-        verify(candidates, never()).add(anyString());
+        assertThat(candidates, is(new HashSet<>()));
     }
 }
