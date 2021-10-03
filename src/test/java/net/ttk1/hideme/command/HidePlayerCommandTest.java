@@ -7,7 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -61,8 +64,7 @@ public class HidePlayerCommandTest {
         when(john.getName()).thenReturn("john");
         Player michael = mock(Player.class);
         when(michael.getName()).thenReturn("michael");
-        Collection<? extends Player> onlinePlayers = Arrays.asList(john, michael);
-        when(manager.getOnlinePlayers()).thenAnswer(x -> onlinePlayers);
+        when(manager.getOnlinePlayers()).thenAnswer(x -> Arrays.asList(john, michael));
         when(plugin.getManager()).thenReturn(manager);
         HidePlayerCommand command = new HidePlayerCommand(plugin);
         CommandSender sender = mock(CommandSender.class);
