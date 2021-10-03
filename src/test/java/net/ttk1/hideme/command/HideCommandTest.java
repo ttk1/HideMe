@@ -42,8 +42,8 @@ public class HideCommandTest {
         reset(player, manager);
         when(manager.isHidden(player)).thenReturn(false);
         command.executeImpl(player, new String[]{});
-        verify(player).sendMessage("You are now hidden.");
-        verify(manager, times(1)).hidePlayer(any());
+        verify(player, times(1)).sendMessage("You are now hidden.");
+        verify(manager, times(1)).hidePlayer(player);
 
         // コンソール
         reset(manager);

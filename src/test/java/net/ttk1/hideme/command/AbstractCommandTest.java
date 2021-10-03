@@ -79,7 +79,7 @@ public class AbstractCommandTest {
         // 権限なし
         when(sender.hasPermission(anyString())).thenReturn(false);
         command.execute(sender, null);
-        verify(sender).sendMessage("You don't hove permission to perform this command!");
+        verify(sender, times(1)).sendMessage("You don't hove permission to perform this command!");
     }
 
     @Test
