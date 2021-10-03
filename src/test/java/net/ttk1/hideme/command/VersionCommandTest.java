@@ -13,13 +13,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class ListCommandTest {
+public class VersionCommandTest {
     @Test
     public void commandNameAndPermissionTest() {
         HideMe plugin = mock(HideMe.class);
-        ListCommand command = new ListCommand(plugin);
-        assertThat(command.commandName, is("list"));
-        assertThat(command.permission, is("hideme.list"));
+        VersionCommand command = new VersionCommand(plugin);
+        assertThat(command.commandName, is("version"));
+        assertThat(command.permission, is("hideme.version"));
     }
 
     @Ignore
@@ -31,19 +31,19 @@ public class ListCommandTest {
     @Test
     public void tabCompleteImplTest() {
         HideMe plugin = mock(HideMe.class);
-        ListCommand command = new ListCommand(plugin);
+        VersionCommand command = new VersionCommand(plugin);
         CommandSender sender = mock(CommandSender.class);
         Set<String> candidates = new HashSet<>();
 
         // args.length == 0
         command.tabCompleteImpl(sender, new String[]{}, candidates);
-        assertThat(candidates, is(new HashSet<>(Collections.singletonList("list"))));
+        assertThat(candidates, is(new HashSet<>(Collections.singletonList("version"))));
 
         // args.length == 1
         // コマンド名が前方一致する
         candidates.clear();
-        command.tabCompleteImpl(sender, new String[]{"l"}, candidates);
-        assertThat(candidates, is(new HashSet<>(Collections.singletonList("list"))));
+        command.tabCompleteImpl(sender, new String[]{"v"}, candidates);
+        assertThat(candidates, is(new HashSet<>(Collections.singletonList("version"))));
 
         // コマンド名が前方一致しない
         candidates.clear();

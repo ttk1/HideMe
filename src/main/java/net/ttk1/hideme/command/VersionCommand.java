@@ -6,16 +6,14 @@ import org.bukkit.command.CommandSender;
 import java.util.Set;
 
 public class VersionCommand extends AbstractCommand {
-    private final String pluginVersionString;
 
     public VersionCommand(HideMe plugin) {
         super(plugin, "version", "hideme.version", 0, false);
-        this.pluginVersionString = plugin.getDescription().getVersion();
     }
 
     @Override
     protected void executeImpl(CommandSender sender, String[] args) {
-        sender.sendMessage(pluginVersionString);
+        sender.sendMessage(manager.getVersion());
     }
 
     @Override

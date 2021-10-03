@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 public class HideMeManager {
     private final HideMe plugin;
+    private final String version;
     private final Server server;
     private final Logger logger;
     private final File dataFile;
@@ -27,6 +28,7 @@ public class HideMeManager {
 
     public HideMeManager(HideMe plugin) throws IOException, InvalidConfigurationException {
         this.plugin = plugin;
+        this.version = plugin.getDescription().getVersion();
         this.server = plugin.getServer();
         this.logger = plugin.getLogger();
         this.dataFile = new File(plugin.getDataFolder(), "hidden_players.yml");
@@ -56,6 +58,10 @@ public class HideMeManager {
             e.printStackTrace();
             logger.severe("データの保存に失敗しました。");
         }
+    }
+
+    public String getVersion() {
+        return version;
     }
 
     public Collection<? extends Player> getOnlinePlayers() {
