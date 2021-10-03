@@ -91,13 +91,19 @@ public class AbstractCommandTest {
 
         // 権限あり
         when(sender.hasPermission(anyString())).thenReturn(true);
-        command.tabComplete(sender, null, candidates);
+        command.tabComplete(sender, new String[]{"command"}, candidates);
         assertThat(candidates, is(new HashSet<>(Collections.singletonList("test"))));
+
+        // 引数多い
+        candidates.clear();
+        when(sender.hasPermission(anyString())).thenReturn(true);
+        command.tabComplete(sender, new String[]{"command", "arg1"}, candidates);
+        assertThat(candidates, is(new HashSet<>()));
 
         // 権限なし
         candidates.clear();
         when(sender.hasPermission(anyString())).thenReturn(false);
-        command.tabComplete(sender, null, candidates);
+        command.tabComplete(sender, new String[]{"command"}, candidates);
         assertThat(candidates, is(new HashSet<>()));
     }
 }

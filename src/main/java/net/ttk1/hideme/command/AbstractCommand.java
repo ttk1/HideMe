@@ -49,7 +49,7 @@ public abstract class AbstractCommand implements HideMeCommand {
 
     @Override
     public final void tabComplete(CommandSender sender, String[] args, Set<String> candidates) {
-        if (checkPermission(sender)) {
+        if (args.length - 1 <= argc && checkPermission(sender)) {
             tabCompleteImpl(sender, args, candidates);
         }
     }
