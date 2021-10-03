@@ -16,19 +16,18 @@ public class HidePlayerCommand extends AbstractCommand {
     @Override
     protected void executeImpl(CommandSender sender, String[] args) {
         String playerName = args[1];
-        for (OfflinePlayer offlinePlayer : manager.getOfflinePlayers()) {
-            if (playerName.equals(offlinePlayer.getName())) {
-                if (!manager.isHidden(offlinePlayer)) {
-                    manager.hidePlayer(offlinePlayer);
-                    sender.sendMessage("Player " + playerName + " is now hidden.");
-                } else {
-                    sender.sendMessage("Player " + playerName + " is already hidden.");
-                }
-                return;
+        OfflinePlayer player = manager.getOfflinePlayer(playerName);
+        if (player != null) {
+            if (!manager.isHidden(player)) {
+                manager.hidePlayer(player);
+                sender.sendMessage("Player " + playerName + " is now hidden.");
+            } else {
+                sender.sendMessage("Player " + playerName + " is already hidden.");
             }
+        } else {
+            // not found
+            sender.sendMessage("Player " + playerName + " not found.");
         }
-        // not found
-        sender.sendMessage("Player " + playerName + " not found.");
     }
 
     @Override

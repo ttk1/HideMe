@@ -66,6 +66,23 @@ public class HideMeManager {
         return server.getOfflinePlayers();
     }
 
+    /**
+     * 名前を指定して OfflinePlayer を取得する。
+     * 名前の変更時に、名前の重複が起こる可能性はあるが、その場合は最初に見つかった方を返す。
+     * Server::getOfflinePlayer(String name) は Deprecated なので、とりあえず自前で実装しておく。
+     *
+     * @param playerName 取得したい Player の名前
+     * @return 見つかれば OfflinePlayer を、それ以外は null を返す
+     */
+    public OfflinePlayer getOfflinePlayer(String playerName) {
+        for (OfflinePlayer offlinePlayer : server.getOfflinePlayers()) {
+            if (playerName.equals(offlinePlayer.getName())) {
+                return offlinePlayer;
+            }
+        }
+        return null;
+    }
+
     private void addHiddenPlayer(String playerUUID) {
         hiddenPlayerUUIDs.add(playerUUID);
     }
