@@ -2,7 +2,6 @@ package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 
@@ -30,7 +29,6 @@ public class ShowCommandTest {
         when(plugin.getManager()).thenReturn(manager);
         ShowCommand command = new ShowCommand(plugin);
         Player player = mock(Player.class);
-        ConsoleCommandSender console = mock(ConsoleCommandSender.class);
 
         // すでに visible
         when(manager.isHidden(player)).thenReturn(false);
@@ -44,12 +42,6 @@ public class ShowCommandTest {
         command.executeImpl(player, new String[]{});
         verify(player, times(1)).sendMessage("You are now visible.");
         verify(manager, times(1)).showPlayer(player);
-
-        // コンソール
-        reset(manager);
-        command.executeImpl(console, new String[]{});
-        verify(console).sendMessage("This is player command!");
-        verify(manager, never()).hidePlayer(any());
     }
 
     @Test
@@ -57,7 +49,6 @@ public class ShowCommandTest {
         HideMe plugin = mock(HideMe.class);
         ShowCommand command = new ShowCommand(plugin);
         Player player = mock(Player.class);
-        ConsoleCommandSender console = mock(ConsoleCommandSender.class);
         Set<String> candidates = new HashSet<>();
 
         // コマンド違い（マッチしない）
@@ -71,13 +62,5 @@ public class ShowCommandTest {
         candidates.clear();
         command.tabCompleteImpl(player, new String[]{"s"}, candidates);
         assertThat(candidates, is(new HashSet<>(Collections.singletonList("show"))));
-
-        // console（マッチしない）
-        candidates.clear();
-        command.tabCompleteImpl(console, new String[]{}, candidates);
-        assertThat(candidates, is(new HashSet<>()));
-        candidates.clear();
-        command.tabCompleteImpl(console, new String[]{"s"}, candidates);
-        assertThat(candidates, is(new HashSet<>()));
     }
 }

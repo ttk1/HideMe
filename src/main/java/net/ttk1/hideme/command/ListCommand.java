@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class ListCommand extends AbstractCommand {
     public ListCommand(HideMe plugin) {
-        super(plugin, "list", "hideme.list", 0);
+        super(plugin, "list", "hideme.list", 0, false);
     }
 
     @Override

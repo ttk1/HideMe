@@ -9,7 +9,7 @@ public class VersionCommand extends AbstractCommand {
     private final String pluginVersionString;
 
     public VersionCommand(HideMe plugin) {
-        super(plugin, "version", "hideme.version", 0);
+        super(plugin, "version", "hideme.version", 0, false);
         this.pluginVersionString = plugin.getDescription().getVersion();
     }
 

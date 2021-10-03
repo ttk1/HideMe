@@ -2,7 +2,7 @@ package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
 
@@ -30,7 +30,6 @@ public class HideCommandTest {
         when(plugin.getManager()).thenReturn(manager);
         HideCommand command = new HideCommand(plugin);
         Player player = mock(Player.class);
-        ConsoleCommandSender console = mock(ConsoleCommandSender.class);
 
         // すでに hidden
         when(manager.isHidden(player)).thenReturn(true);
@@ -44,40 +43,25 @@ public class HideCommandTest {
         command.executeImpl(player, new String[]{});
         verify(player, times(1)).sendMessage("You are now hidden.");
         verify(manager, times(1)).hidePlayer(player);
-
-        // コンソール
-        reset(manager);
-        command.executeImpl(console, new String[]{});
-        verify(console).sendMessage("This is player command!");
-        verify(manager, never()).hidePlayer(any());
     }
 
     @Test
     public void tabCompleteImplTest() {
         HideMe plugin = mock(HideMe.class);
         HideCommand command = new HideCommand(plugin);
-        Player player = mock(Player.class);
-        ConsoleCommandSender console = mock(ConsoleCommandSender.class);
+        CommandSender sender = mock(CommandSender.class);
         Set<String> candidates = new HashSet<>();
 
         // コマンド違い（マッチしない）
-        command.tabCompleteImpl(player, new String[]{"x"}, candidates);
+        command.tabCompleteImpl(sender, new String[]{"x"}, candidates);
         assertThat(candidates, is(new HashSet<>()));
 
         // マッチ
         candidates.clear();
-        command.tabCompleteImpl(player, new String[]{}, candidates);
+        command.tabCompleteImpl(sender, new String[]{}, candidates);
         assertThat(candidates, is(new HashSet<>(Collections.singletonList("hide"))));
         candidates.clear();
-        command.tabCompleteImpl(player, new String[]{"h"}, candidates);
+        command.tabCompleteImpl(sender, new String[]{"h"}, candidates);
         assertThat(candidates, is(new HashSet<>(Collections.singletonList("hide"))));
-
-        // console（マッチしない）
-        candidates.clear();
-        command.tabCompleteImpl(console, new String[]{}, candidates);
-        assertThat(candidates, is(new HashSet<>()));
-        candidates.clear();
-        command.tabCompleteImpl(console, new String[]{"h"}, candidates);
-        assertThat(candidates, is(new HashSet<>()));
     }
 }

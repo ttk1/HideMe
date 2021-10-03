@@ -15,8 +15,8 @@ import static org.mockito.Mockito.*;
 
 public class AbstractCommandTest {
     static class HideMeCommandImpl extends AbstractCommand {
-        public HideMeCommandImpl(HideMe plugin, String commandName, String permission, int argc) {
-            super(plugin, commandName, permission, argc);
+        public HideMeCommandImpl(HideMe plugin, String commandName, String permission, int argc, boolean playerOnly) {
+            super(plugin, commandName, permission, argc, playerOnly);
         }
 
         @Override
@@ -32,7 +32,7 @@ public class AbstractCommandTest {
     @Test
     public void checkPermissionTest() {
         HideMe plugin = mock(HideMe.class);
-        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0);
+        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0, false);
         CommandSender sender = mock(CommandSender.class);
         // 権限なしの場合
         when(sender.hasPermission(anyString())).thenReturn(false);
@@ -47,7 +47,7 @@ public class AbstractCommandTest {
         HideMe plugin = mock(HideMe.class);
 
         // 引数なしのコマンド
-        AbstractCommand command1 = new HideMeCommandImpl(plugin, "command1", "permission", 0);
+        AbstractCommand command1 = new HideMeCommandImpl(plugin, "command1", "permission", 0, false);
         // マッチ
         assertThat(command1.match(new String[]{"command1"}), is(true));
         // 引数多い
@@ -56,7 +56,7 @@ public class AbstractCommandTest {
         assertThat(command1.match(new String[]{"commandX"}), is(false));
 
         // 引数有りのコマンド
-        AbstractCommand command2 = new HideMeCommandImpl(plugin, "command2", "permission", 1);
+        AbstractCommand command2 = new HideMeCommandImpl(plugin, "command2", "permission", 1, false);
         // マッチ
         assertThat(command2.match(new String[]{"command2", "arg1"}), is(true));
         // 引数少ない
@@ -68,24 +68,33 @@ public class AbstractCommandTest {
     @Test
     public void executeTest() {
         HideMe plugin = mock(HideMe.class);
-        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0);
+        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0, false);
+        AbstractCommand playerCommand = new HideMeCommandImpl(plugin, "command", "permission", 0, true);
         CommandSender sender = mock(CommandSender.class);
 
         // 権限あり
         when(sender.hasPermission(anyString())).thenReturn(true);
-        command.execute(sender, null);
+        command.execute(sender, new String[]{"command"});
         verify(sender, never()).sendMessage(anyString());
 
+        // playerOnly
+        reset(sender);
+        when(sender.hasPermission(anyString())).thenReturn(true);
+        playerCommand.execute(sender, new String[]{"command"});
+        verify(sender, times(1)).sendMessage("This is player command!");
+
         // 権限なし
+        reset(sender);
         when(sender.hasPermission(anyString())).thenReturn(false);
-        command.execute(sender, null);
+        command.execute(sender, new String[]{"command"});
         verify(sender, times(1)).sendMessage("You don't hove permission to perform this command!");
     }
 
     @Test
     public void tabCompleteTest() {
         HideMe plugin = mock(HideMe.class);
-        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0);
+        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0, false);
+        AbstractCommand playerCommand = new HideMeCommandImpl(plugin, "command", "permission", 0, true);
         CommandSender sender = mock(CommandSender.class);
         Set<String> candidates = new HashSet<>();
 
@@ -93,6 +102,12 @@ public class AbstractCommandTest {
         when(sender.hasPermission(anyString())).thenReturn(true);
         command.tabComplete(sender, new String[]{"command"}, candidates);
         assertThat(candidates, is(new HashSet<>(Collections.singletonList("test"))));
+
+        // playerOnly
+        candidates.clear();
+        when(sender.hasPermission(anyString())).thenReturn(true);
+        playerCommand.tabComplete(sender, new String[]{"command"}, candidates);
+        assertThat(candidates, is(new HashSet<>()));
 
         // 引数多い
         candidates.clear();

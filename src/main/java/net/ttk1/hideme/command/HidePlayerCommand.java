@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class HidePlayerCommand extends AbstractCommand {
     public HidePlayerCommand(HideMe plugin) {
-        super(plugin, "hide", "hideme.hide.player", 1);
+        super(plugin, "hide", "hideme.hide.player", 1, false);
     }
 
     @Override

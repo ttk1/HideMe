@@ -4,6 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Set;
 
@@ -12,12 +13,14 @@ public abstract class AbstractCommand implements HideMeCommand {
     protected final String commandName;
     protected final String permission;
     private final int argc;
+    private final boolean playerOnly;
 
-    public AbstractCommand(HideMe plugin, String commandName, String permission, int argc) {
+    public AbstractCommand(HideMe plugin, String commandName, String permission, int argc, boolean playerOnly) {
         this.manager = plugin.getManager();
         this.commandName = commandName;
         this.permission = permission;
         this.argc = argc;
+        this.playerOnly = playerOnly;
     }
 
     @VisibleForTesting
@@ -33,7 +36,11 @@ public abstract class AbstractCommand implements HideMeCommand {
     @Override
     public final void execute(CommandSender sender, String[] args) {
         if (checkPermission(sender)) {
-            executeImpl(sender, args);
+            if (!playerOnly || sender instanceof Player) {
+                executeImpl(sender, args);
+            } else {
+                sender.sendMessage("This is player command!");
+            }
         } else {
             sender.sendMessage("You don't hove permission to perform this command!");
         }
@@ -49,7 +56,7 @@ public abstract class AbstractCommand implements HideMeCommand {
 
     @Override
     public final void tabComplete(CommandSender sender, String[] args, Set<String> candidates) {
-        if (args.length - 1 <= argc && checkPermission(sender)) {
+        if (args.length - 1 <= argc && (!playerOnly || sender instanceof Player) && checkPermission(sender)) {
             tabCompleteImpl(sender, args, candidates);
         }
     }

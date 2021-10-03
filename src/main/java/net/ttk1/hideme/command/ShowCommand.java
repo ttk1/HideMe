@@ -8,32 +8,26 @@ import java.util.Set;
 
 public class ShowCommand extends AbstractCommand {
     public ShowCommand(HideMe plugin) {
-        super(plugin, "show", "hideme.show", 0);
+        super(plugin, "show", "hideme.show", 0, true);
     }
 
     @Override
     protected void executeImpl(CommandSender sender, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (manager.isHidden(player)) {
-                manager.showPlayer(player);
-                player.sendMessage("You are now visible.");
-            } else {
-                player.sendMessage("You are already visible.");
-            }
+        Player player = (Player) sender;
+        if (manager.isHidden(player)) {
+            manager.showPlayer(player);
+            player.sendMessage("You are now visible.");
         } else {
-            sender.sendMessage("This is player command!");
+            player.sendMessage("You are already visible.");
         }
     }
 
     @Override
     protected void tabCompleteImpl(CommandSender sender, String[] args, Set<String> candidates) {
-        if (sender instanceof Player) {
-            if (args.length == 0) {
-                candidates.add(commandName);
-            } else if (args.length == 1 && commandName.startsWith(args[0])) {
-                candidates.add(commandName);
-            }
+        if (args.length == 0) {
+            candidates.add(commandName);
+        } else if (args.length == 1 && commandName.startsWith(args[0])) {
+            candidates.add(commandName);
         }
     }
 }

@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ReapplyCommand extends AbstractCommand {
     public ReapplyCommand(HideMe plugin) {
-        super(plugin, "reapply", "hideme.reapply", 0);
+        super(plugin, "reapply", "hideme.reapply", 0, false);
     }
 
     @Override
