@@ -1,14 +1,14 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
 
 public class StatusCommand extends AbstractCommand {
-    public StatusCommand(HideMe plugin) {
-        super(plugin, "status", "hideme.status", 0, true);
+    public StatusCommand(HideMeManager manager) {
+        super(manager, "status", "hideme.status", 0, true);
     }
 
     @Override

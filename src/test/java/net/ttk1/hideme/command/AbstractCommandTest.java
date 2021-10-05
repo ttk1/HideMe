@@ -1,6 +1,6 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.junit.Test;
 
@@ -15,8 +15,8 @@ import static org.mockito.Mockito.*;
 
 public class AbstractCommandTest {
     static class HideMeCommandImpl extends AbstractCommand {
-        public HideMeCommandImpl(HideMe plugin, String commandName, String permission, int argc, boolean playerOnly) {
-            super(plugin, commandName, permission, argc, playerOnly);
+        public HideMeCommandImpl(HideMeManager manager, String commandName, String permission, int argc, boolean playerOnly) {
+            super(manager, commandName, permission, argc, playerOnly);
         }
 
         @Override
@@ -31,8 +31,8 @@ public class AbstractCommandTest {
 
     @Test
     public void checkPermissionTest() {
-        HideMe plugin = mock(HideMe.class);
-        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0, false);
+        HideMeManager manager = mock(HideMeManager.class);
+        AbstractCommand command = new HideMeCommandImpl(manager, "command", "permission", 0, false);
         CommandSender sender = mock(CommandSender.class);
         // 権限なしの場合
         when(sender.hasPermission(anyString())).thenReturn(false);
@@ -44,10 +44,10 @@ public class AbstractCommandTest {
 
     @Test
     public void matchTest() {
-        HideMe plugin = mock(HideMe.class);
+        HideMeManager manager = mock(HideMeManager.class);
 
         // 引数なしのコマンド
-        AbstractCommand command1 = new HideMeCommandImpl(plugin, "command1", "permission", 0, false);
+        AbstractCommand command1 = new HideMeCommandImpl(manager, "command1", "permission", 0, false);
         // マッチ
         assertThat(command1.match(new String[]{"command1"}), is(true));
         // 引数多い
@@ -56,7 +56,7 @@ public class AbstractCommandTest {
         assertThat(command1.match(new String[]{"commandX"}), is(false));
 
         // 引数有りのコマンド
-        AbstractCommand command2 = new HideMeCommandImpl(plugin, "command2", "permission", 1, false);
+        AbstractCommand command2 = new HideMeCommandImpl(manager, "command2", "permission", 1, false);
         // マッチ
         assertThat(command2.match(new String[]{"command2", "arg1"}), is(true));
         // 引数少ない
@@ -67,9 +67,9 @@ public class AbstractCommandTest {
 
     @Test
     public void executeTest() {
-        HideMe plugin = mock(HideMe.class);
-        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0, false);
-        AbstractCommand playerCommand = new HideMeCommandImpl(plugin, "command", "permission", 0, true);
+        HideMeManager manager = mock(HideMeManager.class);
+        AbstractCommand command = new HideMeCommandImpl(manager, "command", "permission", 0, false);
+        AbstractCommand playerCommand = new HideMeCommandImpl(manager, "command", "permission", 0, true);
         CommandSender sender = mock(CommandSender.class);
 
         // 権限あり
@@ -92,9 +92,9 @@ public class AbstractCommandTest {
 
     @Test
     public void tabCompleteTest() {
-        HideMe plugin = mock(HideMe.class);
-        AbstractCommand command = new HideMeCommandImpl(plugin, "command", "permission", 0, false);
-        AbstractCommand playerCommand = new HideMeCommandImpl(plugin, "command", "permission", 0, true);
+        HideMeManager manager = mock(HideMeManager.class);
+        AbstractCommand command = new HideMeCommandImpl(manager, "command", "permission", 0, false);
+        AbstractCommand playerCommand = new HideMeCommandImpl(manager, "command", "permission", 0, true);
         CommandSender sender = mock(CommandSender.class);
         Set<String> candidates = new HashSet<>();
 

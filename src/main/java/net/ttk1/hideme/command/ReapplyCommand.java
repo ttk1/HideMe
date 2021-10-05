@@ -1,14 +1,14 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
 
 public class ReapplyCommand extends AbstractCommand {
-    public ReapplyCommand(HideMe plugin) {
-        super(plugin, "reapply", "hideme.reapply", 0, false);
+    public ReapplyCommand(HideMeManager manager) {
+        super(manager, "reapply", "hideme.reapply", 0, false);
     }
 
     @Override

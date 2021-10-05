@@ -32,7 +32,7 @@ public class HideMe extends JavaPlugin {
 
             // command
             PluginCommand command = getCommand("hideme");
-            HideMeCommandManager commandManager = new HideMeCommandManager(this);
+            HideMeCommandManager commandManager = new HideMeCommandManager(manager);
             command.setExecutor(new HideMeCommandExecutor(commandManager));
             command.setTabCompleter(new HideMeTabCompleter(commandManager));
         } catch (Exception e) {

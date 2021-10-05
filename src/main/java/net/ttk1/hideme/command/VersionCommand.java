@@ -1,14 +1,14 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.Set;
 
 public class VersionCommand extends AbstractCommand {
 
-    public VersionCommand(HideMe plugin) {
-        super(plugin, "version", "hideme.version", 0, false);
+    public VersionCommand(HideMeManager manager) {
+        super(manager, "version", "hideme.version", 0, false);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package net.ttk1.hideme.command;
 
 import com.google.common.annotations.VisibleForTesting;
-import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,8 +14,8 @@ public abstract class AbstractCommand implements HideMeCommand {
     private final int argc;
     private final boolean playerOnly;
 
-    public AbstractCommand(HideMe plugin, String commandName, String permission, int argc, boolean playerOnly) {
-        this.manager = plugin.getManager();
+    public AbstractCommand(HideMeManager manager, String commandName, String permission, int argc, boolean playerOnly) {
+        this.manager = manager;
         this.commandName = commandName;
         this.permission = permission;
         this.argc = argc;

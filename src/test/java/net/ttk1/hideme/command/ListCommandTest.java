@@ -1,6 +1,6 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,8 +16,8 @@ import static org.mockito.Mockito.mock;
 public class ListCommandTest {
     @Test
     public void commandNameAndPermissionTest() {
-        HideMe plugin = mock(HideMe.class);
-        ListCommand command = new ListCommand(plugin);
+        HideMeManager manager = mock(HideMeManager.class);
+        ListCommand command = new ListCommand(manager);
         assertThat(command.commandName, is("list"));
         assertThat(command.permission, is("hideme.list"));
     }
@@ -30,8 +30,8 @@ public class ListCommandTest {
 
     @Test
     public void tabCompleteImplTest() {
-        HideMe plugin = mock(HideMe.class);
-        ListCommand command = new ListCommand(plugin);
+        HideMeManager manager = mock(HideMeManager.class);
+        ListCommand command = new ListCommand(manager);
         CommandSender sender = mock(CommandSender.class);
         Set<String> candidates = new HashSet<>();
 

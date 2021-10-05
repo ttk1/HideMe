@@ -1,6 +1,5 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,18 +16,16 @@ import static org.mockito.Mockito.*;
 public class HideCommandTest {
     @Test
     public void commandNameAndPermissionTest() {
-        HideMe plugin = mock(HideMe.class);
-        HideCommand command = new HideCommand(plugin);
+        HideMeManager manager = mock(HideMeManager.class);
+        HideCommand command = new HideCommand(manager);
         assertThat(command.commandName, is("hide"));
         assertThat(command.permission, is("hideme.hide"));
     }
 
     @Test
     public void executeImplTest() {
-        HideMe plugin = mock(HideMe.class);
         HideMeManager manager = mock(HideMeManager.class);
-        when(plugin.getManager()).thenReturn(manager);
-        HideCommand command = new HideCommand(plugin);
+        HideCommand command = new HideCommand(manager);
         Player player = mock(Player.class);
 
         // すでに hidden
@@ -47,8 +44,8 @@ public class HideCommandTest {
 
     @Test
     public void tabCompleteImplTest() {
-        HideMe plugin = mock(HideMe.class);
-        HideCommand command = new HideCommand(plugin);
+        HideMeManager manager = mock(HideMeManager.class);
+        HideCommand command = new HideCommand(manager);
         CommandSender sender = mock(CommandSender.class);
         Set<String> candidates = new HashSet<>();
 

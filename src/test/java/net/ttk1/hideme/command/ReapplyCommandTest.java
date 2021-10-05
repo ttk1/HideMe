@@ -1,6 +1,5 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,21 +17,19 @@ import static org.mockito.Mockito.*;
 public class ReapplyCommandTest {
     @Test
     public void commandNameAndPermissionTest() {
-        HideMe plugin = mock(HideMe.class);
-        ReapplyCommand command = new ReapplyCommand(plugin);
+        HideMeManager manager = mock(HideMeManager.class);
+        ReapplyCommand command = new ReapplyCommand(manager);
         assertThat(command.commandName, is("reapply"));
         assertThat(command.permission, is("hideme.reapply"));
     }
 
     @Test
     public void executeImplTest() {
-        HideMe plugin = mock(HideMe.class);
         HideMeManager manager = mock(HideMeManager.class);
         Player john = mock(Player.class);
         Player michael = mock(Player.class);
         when(manager.getOnlinePlayers()).thenAnswer(x -> Arrays.asList(john, michael));
-        when(plugin.getManager()).thenReturn(manager);
-        ReapplyCommand command = new ReapplyCommand(plugin);
+        ReapplyCommand command = new ReapplyCommand(manager);
         CommandSender sender = mock(CommandSender.class);
 
         command.executeImpl(sender, new String[]{"reapply"});
@@ -43,8 +40,8 @@ public class ReapplyCommandTest {
 
     @Test
     public void tabCompleteImplTest() {
-        HideMe plugin = mock(HideMe.class);
-        ReapplyCommand command = new ReapplyCommand(plugin);
+        HideMeManager manager = mock(HideMeManager.class);
+        ReapplyCommand command = new ReapplyCommand(manager);
         CommandSender sender = mock(CommandSender.class);
         Set<String> candidates = new HashSet<>();
 

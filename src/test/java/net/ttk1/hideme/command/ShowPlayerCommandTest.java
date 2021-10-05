@@ -1,6 +1,5 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
 import net.ttk1.hideme.HideMeManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -19,18 +18,16 @@ import static org.mockito.Mockito.*;
 public class ShowPlayerCommandTest {
     @Test
     public void commandNameAndPermissionTest() {
-        HideMe plugin = mock(HideMe.class);
-        ShowPlayerCommand command = new ShowPlayerCommand(plugin);
+        HideMeManager manager = mock(HideMeManager.class);
+        ShowPlayerCommand command = new ShowPlayerCommand(manager);
         assertThat(command.commandName, is("show"));
         assertThat(command.permission, is("hideme.show.player"));
     }
 
     @Test
     public void executeImplTest() {
-        HideMe plugin = mock(HideMe.class);
         HideMeManager manager = mock(HideMeManager.class);
-        when(plugin.getManager()).thenReturn(manager);
-        ShowPlayerCommand command = new ShowPlayerCommand(plugin);
+        ShowPlayerCommand command = new ShowPlayerCommand(manager);
         CommandSender sender = mock(CommandSender.class);
         OfflinePlayer player = mock(OfflinePlayer.class);
         when(player.getName()).thenReturn("playerA");
@@ -58,15 +55,13 @@ public class ShowPlayerCommandTest {
 
     @Test
     public void tabCompleteImplTest() {
-        HideMe plugin = mock(HideMe.class);
         HideMeManager manager = mock(HideMeManager.class);
         Player john = mock(Player.class);
         when(john.getName()).thenReturn("john");
         Player michael = mock(Player.class);
         when(michael.getName()).thenReturn("michael");
         when(manager.getOnlinePlayers()).thenAnswer(x -> Arrays.asList(john, michael));
-        when(plugin.getManager()).thenReturn(manager);
-        ShowPlayerCommand command = new ShowPlayerCommand(plugin);
+        ShowPlayerCommand command = new ShowPlayerCommand(manager);
         CommandSender sender = mock(CommandSender.class);
         Set<String> candidates = new HashSet<>();
 

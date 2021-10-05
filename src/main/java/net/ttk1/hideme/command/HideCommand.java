@@ -1,14 +1,14 @@
 package net.ttk1.hideme.command;
 
-import net.ttk1.hideme.HideMe;
+import net.ttk1.hideme.HideMeManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
 
 public class HideCommand extends AbstractCommand {
-    public HideCommand(HideMe plugin) {
-        super(plugin, "hide", "hideme.hide", 0, true);
+    public HideCommand(HideMeManager manager) {
+        super(manager, "hide", "hideme.hide", 0, true);
     }
 
     @Override
