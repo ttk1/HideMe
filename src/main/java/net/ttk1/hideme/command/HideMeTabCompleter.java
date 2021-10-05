@@ -1,7 +1,9 @@
 package net.ttk1.hideme.command;
 
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,11 +18,11 @@ public class HideMeTabCompleter implements TabCompleter {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command bukkitCommand, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command bukkitCommand, @NotNull String alias, @NotNull String[] args) {
         List<HideMeCommand> commands = commandManager.getCommands();
         Set<String> candidates = new HashSet<>();
         for (HideMeCommand command : commands) {
-            candidates.addAll(command.tabComplete(sender, args));
+            command.tabComplete(sender, args, candidates);
         }
         return new ArrayList<>(candidates);
     }

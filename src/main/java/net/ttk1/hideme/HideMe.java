@@ -24,7 +24,7 @@ public class HideMe extends JavaPlugin {
 
         try {
             // manager
-            manager = new HideMeManager(this);
+            manager = new HideMeManager(new PluginAdapter(this));
 
             // event listener
             getServer().getPluginManager().registerEvents(new SessionListener(this), this);
@@ -32,12 +32,13 @@ public class HideMe extends JavaPlugin {
 
             // command
             PluginCommand command = getCommand("hideme");
-            HideMeCommandManager commandManager = new HideMeCommandManager(this);
+            HideMeCommandManager commandManager = new HideMeCommandManager(manager);
             command.setExecutor(new HideMeCommandExecutor(commandManager));
             command.setTabCompleter(new HideMeTabCompleter(commandManager));
         } catch (Exception e) {
             e.printStackTrace();
             logger.severe("初期化に失敗しました。");
+            return;
         }
         logger.info("初期化が完了しました。");
     }

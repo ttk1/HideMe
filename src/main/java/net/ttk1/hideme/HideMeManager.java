@@ -5,14 +5,12 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -20,19 +18,17 @@ import java.util.stream.Collectors;
  */
 
 public class HideMeManager {
-    private final HideMe plugin;
-    private final Logger logger;
-    private final File dataFile;
-    private Set<String> hiddenPlayerUUIDs;
+    private final PluginAdapter adapter;
+    @VisibleForTesting
+    Set<String> hiddenPlayerUUIDs;
 
-    public HideMeManager(HideMe plugin) throws IOException, InvalidConfigurationException {
-        this.plugin = plugin;
-        this.logger = plugin.getLogger();
-        this.dataFile = new File(plugin.getDataFolder(), "hidden_players.yml");
+    public HideMeManager(PluginAdapter adapter) throws IOException, InvalidConfigurationException {
+        this.adapter = adapter;
         load();
     }
 
     private void load() throws IOException, InvalidConfigurationException {
+        File dataFile = new File(adapter.getDataFolder(), "hidden_players.yml");
         if (dataFile.exists()) {
             FileConfiguration config = new YamlConfiguration();
             config.load(dataFile);
@@ -47,14 +43,44 @@ public class HideMeManager {
      * 保存時の例外は、スタックトレースの表示だけやって握りつぶす
      */
     public void save() {
+        File dataFile = new File(adapter.getDataFolder(), "hidden_players.yml");
         FileConfiguration config = new YamlConfiguration();
         config.set("hidden_player_uuids", new ArrayList<>(hiddenPlayerUUIDs));
         try {
             config.save(dataFile);
         } catch (IOException e) {
             e.printStackTrace();
-            logger.severe("データの保存に失敗しました。");
+            adapter.getLogger().severe("データの保存に失敗しました。");
         }
+    }
+
+    public String getVersion() {
+        return adapter.getVersion();
+    }
+
+    public Collection<? extends Player> getOnlinePlayers() {
+        return adapter.getOnlinePlayers();
+    }
+
+    public OfflinePlayer[] getOfflinePlayers() {
+        return adapter.getOfflinePlayers();
+    }
+
+    /**
+     * 名前を指定して OfflinePlayer を取得する。
+     * 名前の変更時に、名前の重複が起こる可能性はあるが、その場合は最初に見つかった方を返す。
+     * Server::getOfflinePlayer(String name) は Deprecated なので、とりあえず自前で実装しておく。
+     *
+     * @param playerName 取得したい Player の名前
+     * @return 見つかれば OfflinePlayer を、それ以外は null を返す
+     */
+    public OfflinePlayer getOfflinePlayer(String playerName) {
+        for (OfflinePlayer offlinePlayer : getOfflinePlayers()) {
+            if (playerName.equals(offlinePlayer.getName())) {
+                return offlinePlayer;
+            }
+        }
+        return null;
     }
 
     private void addHiddenPlayer(String playerUUID) {
@@ -68,49 +94,15 @@ public class HideMeManager {
     /**
      * 指定したプレーヤーを他のプレーヤーから見えないようにする
      *
-     * @param player 対象のプレーヤー
-     */
-    public void hidePlayer(Player player) {
-        if (player != null) {
-            addHiddenPlayer(player.getUniqueId().toString());
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
-                if (!player.equals(p)) {
-                    if (p.hasPermission("hideme.bypass")) {
-                        p.showPlayer(plugin, player);
-                    } else {
-                        p.hidePlayer(plugin, player);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 指定したプレーヤーを他のプレーヤーから見えないようにする
-     *
      * @param offlinePlayer 対象のプレーヤー
      */
-    public void hidePlayer(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer != null) {
-            if (offlinePlayer.isOnline()) {
-                hidePlayer(offlinePlayer.getPlayer());
-            } else {
-                addHiddenPlayer(offlinePlayer.getUniqueId().toString());
-            }
-        }
-    }
-
-    /**
-     * 指定したプレーヤーを他のプレーヤーから見えるようにする
-     *
-     * @param player 対象のプレーヤー
-     */
-    public void showPlayer(Player player) {
+    public void hidePlayer(@NotNull OfflinePlayer offlinePlayer) {
+        addHiddenPlayer(offlinePlayer.getUniqueId().toString());
+        Player player = offlinePlayer.getPlayer();
         if (player != null) {
-            removeHiddenPlayer(player.getUniqueId().toString());
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
-                if (!player.equals(p)) {
-                    p.showPlayer(plugin, player);
+            for (Player p : getOnlinePlayers()) {
+                if (!player.equals(p) && !p.hasPermission("hideme.bypass")) {
+                    p.hidePlayer(adapter.getPlugin(), player);
                 }
             }
         }
@@ -121,12 +113,14 @@ public class HideMeManager {
      *
      * @param offlinePlayer 対象のプレーヤー
      */
-    public void showPlayer(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer != null) {
-            if (offlinePlayer.isOnline()) {
-                showPlayer(offlinePlayer.getPlayer());
-            } else {
-                removeHiddenPlayer(offlinePlayer.getUniqueId().toString());
+    public void showPlayer(@NotNull OfflinePlayer offlinePlayer) {
+        removeHiddenPlayer(offlinePlayer.getUniqueId().toString());
+        Player player = offlinePlayer.getPlayer();
+        if (player != null) {
+            for (Player p : getOnlinePlayers()) {
+                if (!player.equals(p)) {
+                    p.showPlayer(adapter.getPlugin(), player);
+                }
             }
         }
     }
@@ -137,15 +131,13 @@ public class HideMeManager {
      *
      * @param player 対象のプレーヤー
      */
-    public void apply(Player player) {
-        if (player != null) {
-            for (Player p : plugin.getServer().getOnlinePlayers()) {
-                if (!player.equals(p)) {
-                    if (isHidden(p) && !player.hasPermission("hideme.bypass")) {
-                        player.hidePlayer(plugin, p);
-                    } else {
-                        player.showPlayer(plugin, p);
-                    }
+    public void apply(@NotNull Player player) {
+        for (Player p : getOnlinePlayers()) {
+            if (!player.equals(p)) {
+                if (isHidden(p) && !player.hasPermission("hideme.bypass")) {
+                    player.hidePlayer(adapter.getPlugin(), p);
+                } else {
+                    player.showPlayer(adapter.getPlugin(), p);
                 }
             }
         }
@@ -157,18 +149,8 @@ public class HideMeManager {
      * @param player 対象のプレーヤー
      * @return 指定したプレーヤーが見えない状態どうか（true = 見えない）
      */
-    public boolean isHidden(Player player) {
+    public boolean isHidden(@NotNull OfflinePlayer player) {
         return hiddenPlayerUUIDs.contains(player.getUniqueId().toString());
-    }
-
-    /**
-     * 指定したプレーヤーが他のプレーヤーから見えない状態かどうかを返す
-     *
-     * @param offlinePlayer 対象のプレーヤー
-     * @return 指定したプレーヤーが見えない状態どうか（true = 見えない）
-     */
-    public boolean isHidden(OfflinePlayer offlinePlayer) {
-        return hiddenPlayerUUIDs.contains(offlinePlayer.getUniqueId().toString());
     }
 
     /**
@@ -177,7 +159,7 @@ public class HideMeManager {
      * @param message バイパスするメッセージ
      */
     public void bypassMessage(String message) {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+        for (Player player : getOnlinePlayers()) {
             if (player.hasPermission("hideme.bypass")) {
                 player.sendMessage(message);
             }
@@ -190,6 +172,6 @@ public class HideMeManager {
      * @return 見えない状態のプレーヤーのリスト
      */
     public Set<OfflinePlayer> getHiddenPlayers() {
-        return Arrays.stream(plugin.getServer().getOfflinePlayers()).filter(this::isHidden).collect(Collectors.toSet());
+        return Arrays.stream(getOfflinePlayers()).filter(this::isHidden).collect(Collectors.toSet());
     }
 }
