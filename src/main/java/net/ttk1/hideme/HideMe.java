@@ -24,7 +24,7 @@ public class HideMe extends JavaPlugin {
 
         try {
             // manager
-            manager = new HideMeManager(this);
+            manager = new HideMeManager(new PluginAdapter(this));
 
             // event listener
             getServer().getPluginManager().registerEvents(new SessionListener(this), this);

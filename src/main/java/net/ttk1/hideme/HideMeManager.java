@@ -1,17 +1,16 @@
 package net.ttk1.hideme;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -19,23 +18,17 @@ import java.util.stream.Collectors;
  */
 
 public class HideMeManager {
-    private final HideMe plugin;
-    private final String version;
-    private final Server server;
-    private final Logger logger;
-    private final File dataFile;
-    private Set<String> hiddenPlayerUUIDs;
+    private final PluginAdapter adapter;
+    @VisibleForTesting
+    Set<String> hiddenPlayerUUIDs;
 
-    public HideMeManager(HideMe plugin) throws IOException, InvalidConfigurationException {
-        this.plugin = plugin;
-        this.version = plugin.getDescription().getVersion();
-        this.server = plugin.getServer();
-        this.logger = plugin.getLogger();
-        this.dataFile = new File(plugin.getDataFolder(), "hidden_players.yml");
+    public HideMeManager(PluginAdapter adapter) throws IOException, InvalidConfigurationException {
+        this.adapter = adapter;
         load();
     }
 
     private void load() throws IOException, InvalidConfigurationException {
+        File dataFile = new File(adapter.getDataFolder(), "hidden_players.yml");
         if (dataFile.exists()) {
             FileConfiguration config = new YamlConfiguration();
             config.load(dataFile);
@@ -50,26 +43,27 @@ public class HideMeManager {
      * 保存時の例外は、スタックトレースの表示だけやって握りつぶす
      */
     public void save() {
+        File dataFile = new File(adapter.getDataFolder(), "hidden_players.yml");
         FileConfiguration config = new YamlConfiguration();
         config.set("hidden_player_uuids", new ArrayList<>(hiddenPlayerUUIDs));
         try {
             config.save(dataFile);
         } catch (IOException e) {
             e.printStackTrace();
-            logger.severe("データの保存に失敗しました。");
+            adapter.getLogger().severe("データの保存に失敗しました。");
         }
     }
 
     public String getVersion() {
-        return version;
+        return adapter.getVersion();
     }
 
     public Collection<? extends Player> getOnlinePlayers() {
-        return server.getOnlinePlayers();
+        return adapter.getOnlinePlayers();
     }
 
     public OfflinePlayer[] getOfflinePlayers() {
-        return server.getOfflinePlayers();
+        return adapter.getOfflinePlayers();
     }
 
     /**
@@ -81,7 +75,7 @@ public class HideMeManager {
      * @return 見つかれば OfflinePlayer を、それ以外は null を返す
      */
     public OfflinePlayer getOfflinePlayer(String playerName) {
-        for (OfflinePlayer offlinePlayer : server.getOfflinePlayers()) {
+        for (OfflinePlayer offlinePlayer : getOfflinePlayers()) {
             if (playerName.equals(offlinePlayer.getName())) {
                 return offlinePlayer;
             }
@@ -107,12 +101,8 @@ public class HideMeManager {
         Player player = offlinePlayer.getPlayer();
         if (player != null) {
             for (Player p : getOnlinePlayers()) {
-                if (!player.equals(p)) {
-                    if (p.hasPermission("hideme.bypass")) {
-                        p.showPlayer(plugin, player);
-                    } else {
-                        p.hidePlayer(plugin, player);
-                    }
+                if (!player.equals(p) && !p.hasPermission("hideme.bypass")) {
+                    p.hidePlayer(adapter.getPlugin(), player);
                 }
             }
         }
@@ -129,7 +119,7 @@ public class HideMeManager {
         if (player != null) {
             for (Player p : getOnlinePlayers()) {
                 if (!player.equals(p)) {
-                    p.showPlayer(plugin, player);
+                    p.showPlayer(adapter.getPlugin(), player);
                 }
             }
         }
@@ -145,9 +135,9 @@ public class HideMeManager {
         for (Player p : getOnlinePlayers()) {
             if (!player.equals(p)) {
                 if (isHidden(p) && !player.hasPermission("hideme.bypass")) {
-                    player.hidePlayer(plugin, p);
+                    player.hidePlayer(adapter.getPlugin(), p);
                 } else {
-                    player.showPlayer(plugin, p);
+                    player.showPlayer(adapter.getPlugin(), p);
                 }
             }
         }
