@@ -61,11 +61,16 @@ public abstract class AbstractCommand implements HideMeCommand {
     }
 
     /**
-     * タブ補完の実装をここに記述する
+     * タブ補完の実装
      *
      * @param sender     タブ補完実行者
      * @param args       コマンド引数
      * @param candidates タブ補完候補をこれに詰める
      */
-    protected abstract void tabCompleteImpl(CommandSender sender, String[] args, Set<String> candidates);
+    protected void tabCompleteImpl(CommandSender sender, String[] args, Set<String> candidates) {
+        if (args.length == 1 && commandName.startsWith(args[0])) {
+            // コマンド名を候補とする
+            candidates.add(commandName);
+        }
+    }
 }

@@ -22,11 +22,6 @@ public class AbstractCommandTest {
         @Override
         protected void executeImpl(CommandSender sender, String[] args) {
         }
-
-        @Override
-        protected void tabCompleteImpl(CommandSender sender, String[] args, Set<String> candidates) {
-            candidates.add("test");
-        }
     }
 
     @Test
@@ -101,7 +96,7 @@ public class AbstractCommandTest {
         // 権限あり
         when(sender.hasPermission(anyString())).thenReturn(true);
         command.tabComplete(sender, new String[]{"command"}, candidates);
-        assertThat(candidates, is(new HashSet<>(Collections.singletonList("test"))));
+        assertThat(candidates, is(new HashSet<>(Collections.singletonList("command"))));
 
         // playerOnly
         candidates.clear();
@@ -119,6 +114,28 @@ public class AbstractCommandTest {
         candidates.clear();
         when(sender.hasPermission(anyString())).thenReturn(false);
         command.tabComplete(sender, new String[]{"command"}, candidates);
+        assertThat(candidates, is(new HashSet<>()));
+    }
+
+    @Test
+    public void tabCompleteImplTest() {
+        HideMeManager manager = mock(HideMeManager.class);
+        AbstractCommand command = new HideMeCommandImpl(manager, "command", "permission", 0, false);
+        CommandSender sender = mock(CommandSender.class);
+        Set<String> candidates = new HashSet<>();
+
+        // コマンド名が空文字列
+        command.tabCompleteImpl(sender, new String[]{""}, candidates);
+        assertThat(candidates, is(new HashSet<>(Collections.singletonList("command"))));
+
+        // コマンド名が前方一致する
+        candidates.clear();
+        command.tabCompleteImpl(sender, new String[]{"c"}, candidates);
+        assertThat(candidates, is(new HashSet<>(Collections.singletonList("command"))));
+
+        // コマンド名が前方一致しない
+        candidates.clear();
+        command.tabCompleteImpl(sender, new String[]{"x"}, candidates);
         assertThat(candidates, is(new HashSet<>()));
     }
 }

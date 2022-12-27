@@ -1,13 +1,8 @@
 package net.ttk1.hideme.command;
 
 import net.ttk1.hideme.HideMeManager;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.Test;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,25 +35,5 @@ public class HideCommandTest {
         command.executeImpl(player, new String[]{});
         verify(player, times(1)).sendMessage("You are now hidden.");
         verify(manager, times(1)).hidePlayer(player);
-    }
-
-    @Test
-    public void tabCompleteImplTest() {
-        HideMeManager manager = mock(HideMeManager.class);
-        HideCommand command = new HideCommand(manager);
-        CommandSender sender = mock(CommandSender.class);
-        Set<String> candidates = new HashSet<>();
-
-        // コマンド違い（マッチしない）
-        command.tabCompleteImpl(sender, new String[]{"x"}, candidates);
-        assertThat(candidates, is(new HashSet<>()));
-
-        // マッチ
-        candidates.clear();
-        command.tabCompleteImpl(sender, new String[]{}, candidates);
-        assertThat(candidates, is(new HashSet<>(Collections.singletonList("hide"))));
-        candidates.clear();
-        command.tabCompleteImpl(sender, new String[]{"h"}, candidates);
-        assertThat(candidates, is(new HashSet<>(Collections.singletonList("hide"))));
     }
 }

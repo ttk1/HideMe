@@ -3,13 +3,7 @@ package net.ttk1.hideme.command;
 import net.ttk1.hideme.HideMeManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,43 +45,5 @@ public class ShowPlayerCommandTest {
         when(manager.getOfflinePlayer("playerA")).thenReturn(null);
         command.executeImpl(sender, new String[]{"show", "playerA"});
         verify(sender, times(1)).sendMessage("Player playerA not found.");
-    }
-
-    @Test
-    public void tabCompleteImplTest() {
-        HideMeManager manager = mock(HideMeManager.class);
-        Player john = mock(Player.class);
-        when(john.getName()).thenReturn("john");
-        Player michael = mock(Player.class);
-        when(michael.getName()).thenReturn("michael");
-        when(manager.getOnlinePlayers()).thenAnswer(x -> Arrays.asList(john, michael));
-        ShowPlayerCommand command = new ShowPlayerCommand(manager);
-        CommandSender sender = mock(CommandSender.class);
-        Set<String> candidates = new HashSet<>();
-
-        // args.length == 0
-        command.tabCompleteImpl(sender, new String[]{}, candidates);
-        assertThat(candidates, is(new HashSet<>(Collections.singletonList("show"))));
-
-        // args.length == 1
-        // コマンド名が前方一致する
-        candidates.clear();
-        command.tabCompleteImpl(sender, new String[]{"s"}, candidates);
-        assertThat(candidates, is(new HashSet<>(Collections.singletonList("show"))));
-
-        // コマンド名が完全一致する
-        candidates.clear();
-        command.tabCompleteImpl(sender, new String[]{"show"}, candidates);
-        assertThat(candidates, is(new HashSet<>(Arrays.asList("john", "michael"))));
-
-        // コマンド名が前方一致しない
-        candidates.clear();
-        command.tabCompleteImpl(sender, new String[]{"z"}, candidates);
-        assertThat(candidates, is(new HashSet<>()));
-
-        // args.length == 2
-        candidates.clear();
-        command.tabCompleteImpl(sender, new String[]{"show", "j"}, candidates);
-        assertThat(candidates, is(new HashSet<>(Collections.singletonList("john"))));
     }
 }
